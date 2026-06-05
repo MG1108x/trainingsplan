@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ernährungsplan – Halbmarathon 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0c0c0f;
+  --s1:       #131318;
+  --s2:       #1a1a22;
+  --s3:       #22222e;
+  --border:   #2a2a38;
+  --border2:  #1e1e28;
+  --text:     #e8e2d8;
+  --muted:    #6a6680;
+  --faint:    #2e2e3a;
+  --cream:    #f0ebe0;
+  --green:    #4ade80;
+  --green2:   #22c55e;
+  --green-d:  #052e16;
+  --teal:     #2dd4bf;
+  --amber:    #fbbf24;
+  --amber-d:  #451a03;
+  --orange:   #fb923c;
+  --red:      #f87171;
+  --purple:   #c084fc;
+  --blue:     #60a5fa;
+  --pink:     #f472b6;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;line-height:1.6;min-height:100vh;}
+
+/* ── HEADER ── */
+header{
+  position:relative;overflow:hidden;
+  padding:52px 24px 38px;text-align:center;
+  border-bottom:1px solid var(--border);
+}
+header::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 70% 90% at 20% 40%,rgba(74,222,128,.07) 0%,transparent 65%),
+    radial-gradient(ellipse 50% 70% at 80% 60%,rgba(251,191,36,.05) 0%,transparent 65%),
+    radial-gradient(ellipse 40% 50% at 50% 0%,rgba(96,165,250,.06) 0%,transparent 60%);
+}
+.h-inner{position:relative;z-index:1;}
+.h-eye{font-size:10px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:14px;}
+h1{font-family:'Playfair Display',serif;font-size:clamp(28px,6vw,52px);font-weight:400;color:var(--cream);letter-spacing:-.5px;}
+h1 em{font-style:italic;color:var(--green);}
+.h-sub{margin-top:8px;color:var(--muted);font-size:12px;font-family:'Playfair Display',serif;font-style:italic;}
+.h-stats{display:flex;justify-content:center;gap:28px;margin-top:28px;flex-wrap:wrap;}
+.h-stat .v{font-size:20px;font-weight:500;color:var(--green);}
+.h-stat .l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-top:2px;}
+
+/* ── NAV ── */
+nav{display:flex;background:#0e0e12;border-bottom:1px solid var(--border2);position:sticky;top:0;z-index:100;flex-wrap:wrap;}
+.nb{padding:13px 18px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.4px;transition:color .2s,border-color .2s;}
+.nb.on{color:var(--green);border-bottom-color:var(--green);}
+.nb:hover:not(.on){color:var(--text);}
+
+/* ── PANELS ── */
+.panel{display:none;max-width:960px;margin:0 auto;padding:22px 16px 56px;}
+.panel.on{display:block;}
+
+/* ── SHARED ── */
+.section-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:var(--cream);margin-bottom:4px;}
+.section-sub{font-size:11px;color:var(--muted);margin-bottom:18px;}
+.badge{display:inline-block;font-size:9px;padding:2px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:1.5px;font-weight:500;}
+.badge.fast{background:#3a1a00;color:var(--amber);}
+.badge.prep{background:#0f2a0f;color:var(--green);}
+.badge.office{background:#1a1a3a;color:var(--blue);}
+.badge.protein{background:#2a0a2a;color:var(--purple);}
+.info-box{padding:14px 16px;border-radius:10px;margin-bottom:14px;}
+.info-box.green{background:var(--s2);border-left:3px solid var(--green);}
+.info-box.amber{background:var(--s2);border-left:3px solid var(--amber);}
+.ib-title{font-size:13px;font-weight:500;margin-bottom:5px;}
+.ib-title.g{color:var(--teal);}
+.ib-title.a{color:var(--amber);}
+.ib-body{font-size:12px;color:var(--muted);line-height:1.75;}
+.ib-body strong{color:var(--text);}
+
+/* ── MACRO BAR ── */
+.macro-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:18px;}
+.macro-card{padding:14px 16px;border-radius:10px;background:var(--s1);border:1px solid var(--border2);}
+.macro-card .val{font-size:22px;font-weight:500;letter-spacing:-.5px;}
+.macro-card .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-top:3px;}
+.macro-card .sub{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.5;}
+
+/* ── MEAL PLAN GRID ── */
+.day-block{margin-bottom:10px;background:var(--s1);border-radius:12px;border:1px solid var(--border2);overflow:hidden;}
+.day-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;user-select:none;}
+.day-header:hover{background:rgba(255,255,255,.015);}
+.day-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.day-name{font-family:'Playfair Display',serif;font-size:16px;color:var(--cream);}
+.day-kcal{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;}
+.day-tags{display:flex;gap:5px;flex-wrap:wrap;}
+.day-chev{color:var(--muted);font-size:11px;transition:transform .2s;}
+.day-block.open .day-chev{transform:rotate(180deg);}
+.day-body{display:none;border-top:1px solid var(--border2);}
+.day-block.open .day-body{display:block;}
+
+.meal-row{display:grid;grid-template-columns:90px 1fr auto;gap:12px;align-items:start;padding:13px 16px;border-bottom:1px solid var(--faint);}
+.meal-row:last-child{border-bottom:none;}
+.meal-time{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;padding-top:2px;}
+.meal-content{}
+.meal-name{font-size:13px;color:var(--text);font-weight:500;margin-bottom:3px;}
+.meal-desc{font-size:11px;color:var(--muted);line-height:1.6;}
+.meal-macros{text-align:right;flex-shrink:0;}
+.meal-prot{font-size:12px;color:var(--purple);font-family:'DM Mono',monospace;}
+.meal-kcal{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* ── SNACK CARDS ── */
+.snack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:22px;}
+.snack-card{padding:14px;border-radius:10px;background:var(--s1);border:1px solid var(--border2);}
+.snack-icon{font-size:22px;margin-bottom:8px;}
+.snack-name{font-size:13px;color:var(--text);font-weight:500;margin-bottom:4px;}
+.snack-desc{font-size:11px;color:var(--muted);line-height:1.6;}
+.snack-macro{margin-top:8px;font-size:10px;color:var(--purple);font-family:'DM Mono',monospace;}
+
+/* ── QUICK DINNERS ── */
+.quick-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-bottom:22px;}
+.quick-card{padding:14px 16px;border-radius:10px;background:var(--s1);border:1px solid var(--border2);border-left:3px solid var(--amber);}
+.quick-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.quick-time{font-size:9px;color:var(--amber);font-family:'DM Mono',monospace;background:var(--amber-d);padding:2px 7px;border-radius:999px;}
+.quick-name{font-size:13px;color:var(--text);font-weight:500;}
+.quick-ing{font-size:11px;color:var(--muted);line-height:1.65;}
+.quick-prot{margin-top:7px;font-size:10px;color:var(--purple);font-family:'DM Mono',monospace;}
+
+/* ── PRE/POST TRAINING ── */
+.timing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:22px;}
+.timing-card{padding:14px 16px;border-radius:10px;background:var(--s1);border:1px solid var(--border2);}
+.tc-label{font-size:9px;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;}
+.tc-label.pre{color:var(--amber);}
+.tc-label.post{color:var(--green);}
+.tc-label.long{color:var(--blue);}
+.tc-item{font-size:12px;color:var(--muted);margin-bottom:4px;line-height:1.5;}
+.tc-item strong{color:var(--text);}
+
+/* ── SHOPPING / PREP ── */
+.list-cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:18px;}
+.list-card{padding:13px 14px;border-radius:10px;background:var(--s1);border:1px solid var(--border2);}
+.list-head{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--teal);margin-bottom:8px;}
+.list-item{font-size:12px;color:var(--muted);margin-bottom:4px;}
+.list-item::before{content:"·";color:var(--green);margin-right:5px;}
+
+footer{text-align:center;padding:28px;font-size:10px;color:#2a2a3a;letter-spacing:3px;text-transform:uppercase;border-top:1px solid var(--border2);}
+
+/* ── RECIPE CARDS ── */
+.recipe-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.rf-btn{padding:6px 14px;border-radius:999px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .2s;}
+.rf-btn.on{background:var(--green-d);color:var(--green);border-color:var(--green);}
+.recipes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+.rec-card{background:var(--s1);border-radius:12px;border:1px solid var(--border2);overflow:hidden;display:flex;flex-direction:column;}
+.rec-img{height:6px;}
+.rec-body{padding:16px;}
+.rec-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px;}
+.rec-name{font-family:'Playfair Display',serif;font-size:16px;color:var(--cream);font-weight:400;}
+.rec-badges{display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0;}
+.rec-meta{display:flex;gap:12px;margin-bottom:10px;}
+.rec-meta-item{font-size:10px;color:var(--muted);}
+.rec-meta-item span{color:var(--text);font-weight:500;}
+.rec-desc{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:10px;}
+.rec-toggle{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;width:100%;transition:all .2s;margin-top:auto;}
+.rec-toggle:hover{border-color:var(--green);color:var(--green);}
+.rec-detail{display:none;border-top:1px solid var(--border2);padding:14px 16px;}
+.rec-detail.open{display:block;}
+.rec-section{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--teal);margin-bottom:7px;margin-top:10px;}
+.rec-section:first-child{margin-top:0;}
+.rec-ing-list{list-style:none;}
+.rec-ing-list li{font-size:12px;color:var(--muted);padding:3px 0;border-bottom:1px solid var(--faint);}
+.rec-ing-list li:last-child{border:none;}
+.rec-ing-list li::before{content:"·";color:var(--green);margin-right:6px;}
+.rec-steps{counter-reset:step;}
+.rec-step{counter-increment:step;display:flex;gap:10px;margin-bottom:8px;}
+.rec-step::before{content:counter(step);font-size:10px;color:var(--bg);background:var(--green);border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-weight:500;}
+.rec-step-text{font-size:12px;color:var(--muted);line-height:1.6;}
+.rec-macros{display:flex;gap:10px;margin-top:12px;padding-top:10px;border-top:1px solid var(--faint);}
+.rec-macro{text-align:center;flex:1;}
+.rec-macro .v{font-size:14px;font-weight:500;}
+.rec-macro .l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+</style>
+</head>
+<body>
+
+<header>
+<div class="h-inner">
+  <div class="h-eye">Vegetarischer Trainingsplan · 29 J · 185 cm · 92 kg · Body Recomposition</div>
+  <h1>Ernährungs<em>plan</em></h1>
+  <p class="h-sub">Pflanzlich · Proteinreich · Alltagstauglich · Büro-ready</p>
+  <div class="h-stats">
+    <div class="h-stat"><div class="v">185 g</div><div class="l">Protein/Tag</div></div>
+    <div class="h-stat"><div class="v">320 g</div><div class="l">Carbs (Ø)</div></div>
+    <div class="h-stat"><div class="v">80 g</div><div class="l">Fett</div></div>
+    <div class="h-stat"><div class="v">~2.750</div><div class="l">kcal Ø</div></div>
+    <div class="h-stat"><div class="v">–450</div><div class="l">kcal Defizit</div></div>
+    <div class="h-stat"><div class="v">Recomp</div><div class="l">Ziel</div></div>
+  </div>
+</div>
+</header>
+
+<nav>
+  <button class="nb on" onclick="tab('woche')">📅 Wochenplan</button>
+  <button class="nb" onclick="tab('snacks')">🍎 Snacks & Büro</button>
+  <button class="nb" onclick="tab('quick')">⚡ Schnelle Abende</button>
+  <button class="nb" onclick="tab('rezepte')">📖 Rezepte</button>
+  <button class="nb" onclick="tab('timing')">🏃 Rund ums Training</button>
+  <button class="nb" onclick="tab('einkauf')">🛒 Einkauf & Prep</button>
+</nav>
+
+<!-- ══════════════ WOCHENPLAN ══════════════ -->
+<div class="panel on" id="p-woche">
+
+  <div style="margin-bottom:20px;">
+    <div class="section-title">7-Tage Mahlzeitenplan</div>
+    <div class="section-sub">Tippe auf einen Tag um alle Mahlzeiten zu sehen · P = Protein · kcal = Kalorien</div>
+  </div>
+
+  <div class="macro-strip">
+    <div class="macro-card"><div class="val" style="color:var(--purple)">185 g</div><div class="lbl">Protein</div><div class="sub">2,0 g/kg · schützt Muskeln im Defizit</div></div>
+    <div class="macro-card"><div class="val" style="color:var(--amber)">320 g Ø</div><div class="lbl">Carbs (Carb Cycling)</div><div class="sub">240–400 g je nach Tag</div></div>
+    <div class="macro-card"><div class="val" style="color:var(--green)">80 g</div><div class="lbl">Fett</div><div class="sub">Hormone & Sättigung</div></div>
+    <div class="macro-card"><div class="val" style="color:var(--blue)">~2.750</div><div class="lbl">kcal Ø</div><div class="sub">–450 unter TDEE (~3.200)</div></div>
+  </div>
+  <div style="margin-bottom:16px;padding:13px 16px;border-radius:10px;background:var(--s2);border-left:3px solid var(--amber);">
+    <div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:6px;">⚡ Carb Cycling – unterschiedliche Kalorienziele je Tag</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:6px;margin-top:8px;">
+      <div style="padding:8px 10px;border-radius:7px;background:var(--bg);border:1px solid #451a03;"><div style="font-size:10px;color:var(--amber);margin-bottom:3px;">DI · SA – Hartes Training</div><div style="font-size:13px;color:var(--text);font-weight:500;">~3.000–3.100 kcal</div><div style="font-size:10px;color:var(--muted);">Carbs: 380–400 g</div></div>
+      <div style="padding:8px 10px;border-radius:7px;background:var(--bg);border:1px solid #1e3a5f;"><div style="font-size:10px;color:var(--blue);margin-bottom:3px;">MO · FR – Gym</div><div style="font-size:13px;color:var(--text);font-weight:500;">~2.750 kcal</div><div style="font-size:10px;color:var(--muted);">Carbs: 320 g</div></div>
+      <div style="padding:8px 10px;border-radius:7px;background:var(--bg);border:1px solid #1a2a1a;"><div style="font-size:10px;color:var(--teal);margin-bottom:3px;">DO – Regen-Lauf</div><div style="font-size:13px;color:var(--text);font-weight:500;">~2.600 kcal</div><div style="font-size:10px;color:var(--muted);">Carbs: 280 g</div></div>
+      <div style="padding:8px 10px;border-radius:7px;background:var(--bg);border:1px solid var(--border2);"><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">MI · SO – Ruhe/Mobility</div><div style="font-size:13px;color:var(--text);font-weight:500;">~2.400 kcal</div><div style="font-size:10px;color:var(--muted);">Carbs: 240 g</div></div>
+    </div>
+  </div>
+
+  <div id="days-container"></div>
+
+</div>
+
+<!-- ══════════════ SNACKS ══════════════ -->
+<div class="panel" id="p-snacks">
+
+  <div class="section-title">Büro-Snacks & Unterwegs</div>
+  <div class="section-sub" style="margin-bottom:16px;">Alle Snacks sind gut vorzubereiten, transportfähig und proteinreich</div>
+
+  <div class="info-box amber" style="margin-bottom:16px;">
+    <div class="ib-title a">Ziel: 2–3 Snacks täglich</div>
+    <div class="ib-body">Zwischen den Hauptmahlzeiten <strong>je ~20–30 g Protein</strong> snacken. Das verteilt die Proteinzufuhr gleichmäßig und verhindert Heißhunger. Vorbereitung Sonntags: 15–20 min für die ganze Woche.</div>
+  </div>
+
+  <div style="margin-bottom:10px;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;">Proteinreiche Snacks (bürotauglich)</div>
+  <div class="snack-grid">
+    <div class="snack-card">
+      <div class="snack-icon">🧀</div>
+      <div class="snack-name">Hüttenkäse-Bowl</div>
+      <div class="snack-desc">200 g Hüttenkäse + Gurke + Kirschtomaten + Prise Salz. In Dose abgefüllt, 2 Tage haltbar.</div>
+      <div class="snack-macro">~24 g P · ~130 kcal</div>
+    </div>
+    <div class="snack-card">
+      <div class="snack-icon">🥚</div>
+      <div class="snack-name">Hartgekochte Eier × 2</div>
+      <div class="snack-desc">Sonntags 6–8 Stück kochen. Salz, Pfeffer, fertig. Der einfachste Protein-Snack.</div>
+      <div class="snack-macro">~13 g P · ~140 kcal</div>
+    </div>
+    <div class="snack-card">
+      <div class="snack-icon">🫘</div>
+      <div class="snack-name">Edamame (gesalzen)</div>
+      <div class="snack-desc">150 g TK-Edamame aufgetaut. Einfach einpacken – auch kalt sehr gut.</div>
+      <div class="snack-macro">~17 g P · ~190 kcal</div>
+    </div>
+    <div class="snack-card">
+      <div class="snack-icon">🥜</div>
+      <div class="snack-name">Greek Yogurt + Nüsse</div>
+      <div class="snack-desc">150 g griechischer Joghurt (10% Fett) + 20 g gemischte Nüsse + Honig optional.</div>
+      <div class="snack-macro">~18 g P · ~240 kcal</div>
+    </div>
+    <div class="snack-card">
+      <div class="snack-icon">🧆</div>
+      <div class="snack-name">Hummus + Gemüse</div>
+      <div class="snack-desc">80 g Hummus + Möhren, Sellerie, Paprika in Streifen. Satt und vitaminreich.</div>
+      <div class="snack-macro">~9 g P · ~220 kcal</div>
+    </div>
+    <div class="snack-card">
+      <div class="snack-icon">🍫</div>
+      <div class="snack-name">Protein-Shake / Riegel</div>
+      <div class="snack-desc">Erbsen/Reis-Blend mit Wasser oder Mandelmilch. Oder guter Riegel (>20 g P, <15 g Zucker).</div>
+      <div class="snack-macro">~25 g P · ~200 kcal</div>
+    </div>
+    <div class="snack-card">
+      <div class="snack-icon">🫙</div>
+      <div class="snack-name">Quark-Dip + Cracker</div>
+      <div class="snack-desc">150 g Magerquark + Schnittlauch + Salz + 4 Reiswaffeln oder Vollkorncracker.</div>
+      <div class="snack-macro">~20 g P · ~210 kcal</div>
+    </div>
+    <div class="snack-card">
+      <div class="snack-icon">🍌</div>
+      <div class="snack-name">Banane + Erdnussmus</div>
+      <div class="snack-desc">1 Banane + 2 EL Erdnuss- oder Mandelmus. Ideal vor dem Training (schnelle Carbs + Fett).</div>
+      <div class="snack-macro">~8 g P · ~270 kcal</div>
+    </div>
+    <div class="snack-card">
+      <div class="snack-icon">🫐</div>
+      <div class="snack-name">Overnight Oats (Büro)</div>
+      <div class="snack-desc">60 g Haferflocken + 200 ml Proteinmilch + Beeren + 1 EL Chia. Abends vorbereiten.</div>
+      <div class="snack-macro">~22 g P · ~350 kcal</div>
+    </div>
+    <div class="snack-card">
+      <div class="snack-icon">🧁</div>
+      <div class="snack-name">Protein-Muffins</div>
+      <div class="snack-desc">Batch-cooking Sonntag: Bananen-Haferflocken-Muffins mit Proteinpulver und Nüssen.</div>
+      <div class="snack-macro">~15 g P · ~200 kcal</div>
+    </div>
+    <div class="snack-card">
+      <div class="snack-icon">🫙</div>
+      <div class="snack-name">Tempeh-Chips</div>
+      <div class="snack-desc">Tempeh in dünne Scheiben schneiden, in Soja+Ahornsirup marinieren, 20 min bei 180°C backen.</div>
+      <div class="snack-macro">~20 g P · ~180 kcal</div>
+    </div>
+    <div class="snack-card">
+      <div class="snack-icon">🥗</div>
+      <div class="snack-name">Linsen-Salat im Glas</div>
+      <div class="snack-desc">150 g Linsen (Dose) + Feta + Kirschtomate + Olivenöl + Zitrone. Im Glas 3 Tage haltbar.</div>
+      <div class="snack-macro">~18 g P · ~280 kcal</div>
+    </div>
+  </div>
+
+  <div style="margin-top:8px;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;">Süße Snacks (Energie-Boost)</div>
+  <div class="snack-grid">
+    <div class="snack-card" style="border-left:2px solid var(--amber);">
+      <div class="snack-icon">🍯</div>
+      <div class="snack-name">Datteln + Nussbutter</div>
+      <div class="snack-desc">3–4 Datteln gefüllt mit Erdnuss- oder Mandelmus. Natürliche Süße + gute Fette.</div>
+      <div class="snack-macro">~5 g P · ~200 kcal</div>
+    </div>
+    <div class="snack-card" style="border-left:2px solid var(--amber);">
+      <div class="snack-icon">🍊</div>
+      <div class="snack-name">Obst-Mix</div>
+      <div class="snack-desc">Apfel + Orange + Handvoll Nüsse. Einfach, transportfähig, Vitamine für die Regeneration.</div>
+      <div class="snack-macro">~5 g P · ~220 kcal</div>
+    </div>
+    <div class="snack-card" style="border-left:2px solid var(--amber);">
+      <div class="snack-icon">🫐</div>
+      <div class="snack-name">Energy Balls</div>
+      <div class="snack-desc">Haferflocken + Datteln + Kakao + Proteinpulver + Kokos. Batch-Prep für 2 Wochen.</div>
+      <div class="snack-macro">~10 g P · ~180 kcal</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════ SCHNELLE ABENDE ══════════════ -->
+<div class="panel" id="p-quick">
+
+  <div class="section-title">Schnelle Abendessen</div>
+  <div class="section-sub" style="margin-bottom:16px;">Alle Gerichte in ≤ 20 Minuten fertig · Proteinreich · Sättigend</div>
+
+  <div class="info-box green" style="margin-bottom:16px;">
+    <div class="ib-title g">Strategie: Kühlschrank-Basics</div>
+    <div class="ib-body">Mit diesen Basics im Kühlschrank ist jedes schnelle Abendessen möglich: <strong>Eier, Tofu, Hüttenkäse, Linsen (Dose), Kichererbsen (Dose), Quinoa (vorgekocht), Tiefkühlgemüse, Soßenbasis (Tomate, Kokosmilch)</strong>. Quinoa und Hülsenfrüchte Sonntags vorkochen.</div>
+  </div>
+
+  <div class="quick-list" id="quick-container"></div>
+
+</div>
+
+<!-- ══════════════ TRAINING TIMING ══════════════ -->
+<div class="panel" id="p-timing">
+
+  <div class="section-title">Rund ums Training essen</div>
+  <div class="section-sub" style="margin-bottom:16px;">Was du vor, während und nach dem Training isst hat direkten Einfluss auf Leistung und Erholung</div>
+
+  <div class="timing-grid">
+    <div class="timing-card">
+      <div class="tc-label pre">⏱ 1–2 h vor dem Training</div>
+      <div class="tc-item"><strong>Hauptmahlzeit</strong>: Reis/Nudeln + Gemüse + leichtes Protein</div>
+      <div class="tc-item"><strong>Fokus</strong>: Kohlenhydrate, wenig Fett/Ballaststoffe</div>
+      <div class="tc-item">Beispiel: Nudeln mit Tomatensoße + Parmesan</div>
+      <div class="tc-item">Beispiel: Reis mit Gemüse + Sojasoße</div>
+    </div>
+    <div class="timing-card">
+      <div class="tc-label pre">⚡ 30–45 min vor</div>
+      <div class="tc-item"><strong>Kleiner Boost</strong>: Schnelle Carbs, leicht verdaulich</div>
+      <div class="tc-item">Beispiel: <strong>Banane</strong> – ideal, natürliche Energie</div>
+      <div class="tc-item">Beispiel: <strong>Reiswaffeln + Honig</strong></div>
+      <div class="tc-item">Beispiel: <strong>1 Medjool-Dattel</strong></div>
+    </div>
+    <div class="timing-card">
+      <div class="tc-label post">✅ Direkt nach dem Training (30 min)</div>
+      <div class="tc-item"><strong>Recovery-Fenster</strong>: 30–40 g Protein + schnelle Carbs</div>
+      <div class="tc-item">Beispiel: <strong>Shake</strong> (Proteinpulver + Banane + Hafermilch)</div>
+      <div class="tc-item">Beispiel: <strong>Hüttenkäse + Banane + Honig</strong></div>
+      <div class="tc-item">Beispiel: <strong>Greek Yogurt + Müsli + Beeren</strong></div>
+    </div>
+    <div class="timing-card">
+      <div class="tc-label long">🏃 Long Run (>10 km)</div>
+      <div class="tc-item"><strong>Abend davor</strong>: Kohlenhydratreich – Pasta, Reis</div>
+      <div class="tc-item"><strong>Morgen davor</strong>: 2 h vorher Haferbrei + Banane</div>
+      <div class="tc-item"><strong>Ab km 10</strong>: Gel oder Datteln + Wasser mitnehmen</div>
+      <div class="tc-item"><strong>Danach</strong>: Richtige Mahlzeit innerhalb 1 h</div>
+    </div>
+    <div class="timing-card">
+      <div class="tc-label post">💪 Gym-Tag</div>
+      <div class="tc-item"><strong>Vor Gym</strong>: Normales Mittagessen reicht</div>
+      <div class="tc-item"><strong>Nach Gym</strong>: Protein-Snack oder Shake</div>
+      <div class="tc-item">Dann innerhalb 2 h <strong>proteinreiche Hauptmahlzeit</strong></div>
+      <div class="tc-item">Ziel: Gesamtprotein über den Tag verteilen</div>
+    </div>
+    <div class="timing-card">
+      <div class="tc-label long">💧 Hydration</div>
+      <div class="tc-item"><strong>Täglich</strong>: mind. 2,5–3 l Wasser</div>
+      <div class="tc-item"><strong>Lauftage</strong>: +0,5–1 l je nach Dauer</div>
+      <div class="tc-item"><strong>Gym</strong>: 0,5–1 l während dem Training</div>
+      <div class="tc-item">Urin hellgelb = gut hydriert ✓</div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:14px;">
+    <div class="section-title" style="font-size:17px;">Carb-Loading (Woche 17–18)</div>
+    <div class="section-sub" style="margin-bottom:12px;">3 Tage vor dem Rennen Kohlenhydrate erhöhen</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;">
+      <div class="timing-card">
+        <div class="tc-label long">Do (3 Tage vor)</div>
+        <div class="tc-item">Kohlenhydrate auf <strong>~350 g/Tag</strong> erhöhen</div>
+        <div class="tc-item">Pasta Abends: große Portion</div>
+        <div class="tc-item">Fett und Ballaststoffe reduzieren</div>
+      </div>
+      <div class="timing-card">
+        <div class="tc-label long">Fr (2 Tage vor)</div>
+        <div class="tc-item">Gleich: <strong>~350 g Carbs</strong></div>
+        <div class="tc-item">Viel Reis, Brot, Süßkartoffel</div>
+        <div class="tc-item">Kein ungewohntes Essen!</div>
+      </div>
+      <div class="timing-card">
+        <div class="tc-label pre">Sa: Race Day</div>
+        <div class="tc-item"><strong>3 h vorher</strong>: Haferbrei + Banane + Honig</div>
+        <div class="tc-item"><strong>1 h vorher</strong>: 1 Banane oder Gel</div>
+        <div class="tc-item">Danach: Gut essen und feiern! 🏁</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════ EINKAUF ══════════════ -->
+<div class="panel" id="p-einkauf">
+
+  <div class="section-title">Wocheneinkauf & Meal Prep</div>
+  <div class="section-sub" style="margin-bottom:16px;">Einmal pro Woche einkaufen · 45–60 min Sonntag vorbereiten · spart Zeit und Geld</div>
+
+  <div class="info-box green" style="margin-bottom:16px;">
+    <div class="ib-title g">Sonntags-Prep-Routine (45 min)</div>
+    <div class="ib-body">
+      1. <strong>Quinoa/Reis kochen</strong> (400 g trocken) – 20 min, passiert von selbst<br>
+      2. <strong>Eier kochen</strong> (8 Stück) – 10 min<br>
+      3. <strong>Gemüse schneiden</strong> (Möhren, Paprika, Gurke) für Snacks der Woche<br>
+      4. <strong>Overnight Oats</strong> für Montag vorbereiten<br>
+      5. <strong>1 Batch Soße</strong> kochen (Tomaten- oder Linsensoße) für 2–3 Abende
+    </div>
+  </div>
+
+  <div class="list-cols">
+    <div class="list-card">
+      <div class="list-head">🥛 Protein-Basis</div>
+      <div class="list-item">Hüttenkäse 2× 500 g</div>
+      <div class="list-item">Magerquark 500 g</div>
+      <div class="list-item">Griechischer Joghurt 500 g</div>
+      <div class="list-item">Eier 12 Stück</div>
+      <div class="list-item">Tofu natur 400 g</div>
+      <div class="list-item">Tempeh 200 g</div>
+      <div class="list-item">Edamame TK 500 g</div>
+      <div class="list-item">Feta 200 g</div>
+    </div>
+    <div class="list-card">
+      <div class="list-head">🫘 Hülsenfrüchte</div>
+      <div class="list-item">Linsen (Dose) 3×</div>
+      <div class="list-item">Kichererbsen (Dose) 2×</div>
+      <div class="list-item">Schwarze Bohnen (Dose) 1×</div>
+      <div class="list-item">Rote Linsen (trocken) 500 g</div>
+      <div class="list-item">Hummus (fertig) 2×</div>
+    </div>
+    <div class="list-card">
+      <div class="list-head">🌾 Kohlenhydrate</div>
+      <div class="list-item">Haferflocken 500 g</div>
+      <div class="list-item">Quinoa 500 g</div>
+      <div class="list-item">Vollkornnudeln 500 g</div>
+      <div class="list-item">Basmati-Reis 1 kg</div>
+      <div class="list-item">Vollkornbrot 1×</div>
+      <div class="list-item">Reiswaffeln 1 Packung</div>
+      <div class="list-item">Süßkartoffeln 1 kg</div>
+    </div>
+    <div class="list-card">
+      <div class="list-head">🥦 Gemüse</div>
+      <div class="list-item">Spinat (TK) 500 g</div>
+      <div class="list-item">Brokkoli (TK) 500 g</div>
+      <div class="list-item">Paprika 4–5 Stück</div>
+      <div class="list-item">Zucchini 2 Stück</div>
+      <div class="list-item">Möhren 1 Bund</div>
+      <div class="list-item">Kirschtomaten 500 g</div>
+      <div class="list-item">Gurke 2 Stück</div>
+      <div class="list-item">Süßkartoffel 1 kg</div>
+    </div>
+    <div class="list-card">
+      <div class="list-head">🍌 Obst</div>
+      <div class="list-item">Bananen 6–8 Stück</div>
+      <div class="list-item">Beeren TK 500 g</div>
+      <div class="list-item">Äpfel 4 Stück</div>
+      <div class="list-item">Orangen 3 Stück</div>
+      <div class="list-item">Datteln (Medjool) 1 Pack</div>
+    </div>
+    <div class="list-card">
+      <div class="list-head">🫙 Pantry-Basics</div>
+      <div class="list-item">Olivenöl extra vergine</div>
+      <div class="list-item">Kokosmilch (Dose) 2×</div>
+      <div class="list-item">Tomaten (Dose) 3×</div>
+      <div class="list-item">Sojasoße / Tamari</div>
+      <div class="list-item">Erdnussmus naturell</div>
+      <div class="list-item">Mandelmus</div>
+      <div class="list-item">Proteinpulver (Erbse/Reis)</div>
+      <div class="list-item">Chia-Samen</div>
+    </div>
+    <div class="list-card">
+      <div class="list-head">🧄 Gewürze & Aromen</div>
+      <div class="list-item">Knoblauch</div>
+      <div class="list-item">Ingwer frisch</div>
+      <div class="list-item">Zitrone / Limette</div>
+      <div class="list-item">Kreuzkümmel</div>
+      <div class="list-item">Paprika (geräuchert)</div>
+      <div class="list-item">Kurkuma</div>
+      <div class="list-item">Zimt</div>
+      <div class="list-item">Flüssiger Honig</div>
+    </div>
+    <div class="list-card">
+      <div class="list-head">🥜 Nüsse & Seeds</div>
+      <div class="list-item">Walnüsse 200 g</div>
+      <div class="list-item">Mandeln 200 g</div>
+      <div class="list-item">Cashews 150 g</div>
+      <div class="list-item">Kürbiskerne 100 g</div>
+      <div class="list-item">Sonnenblumenkerne 100 g</div>
+      <div class="list-item">Hanfsamen 100 g</div>
+    </div>
+  </div>
+
+  <div class="info-box amber">
+    <div class="ib-title a">💊 Supplement-Empfehlungen (vegetarisch)</div>
+    <div class="ib-body">
+      <strong>Vitamin B12</strong>: Bei vegetarischer Ernährung unbedingt supplementieren – 500–1000 µg täglich.<br>
+      <strong>Vitamin D3</strong>: Besonders im Winter, 1000–2000 IE täglich.<br>
+      <strong>Omega-3</strong> (Algenpräparat): Als vegane Alternative zu Fischöl.<br>
+      <strong>Kreatin</strong>: Optional, 3–5 g/Tag – nachweislich Kraft und Muskelaufbau unterstützend.<br>
+      <strong>Eisen & Zink</strong>: Blutwerte prüfen lassen, pflanzliche Quellen schlechter bioverfügbar.
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════ REZEPTE ══════════════ -->
+<div class="panel" id="p-rezepte">
+  <div style="margin-bottom:6px;"><div class="section-title">Rezeptsammlung</div><div class="section-sub" style="margin-bottom:16px;">Vollständige Rezepte mit Zutaten &amp; Zubereitung · Klick für Details</div></div>
+  <div class="recipe-filter">
+    <button class="rf-btn on" onclick="filterRec('alle',this)">Alle</button>
+    <button class="rf-btn" onclick="filterRec('frühstück',this)">Frühstück</button>
+    <button class="rf-btn" onclick="filterRec('mittagessen',this)">Mittagessen</button>
+    <button class="rf-btn" onclick="filterRec('abendessen',this)">Abendessen</button>
+    <button class="rf-btn" onclick="filterRec('meal-prep',this)">Meal-Prep</button>
+    <button class="rf-btn" onclick="filterRec('schnell',this)">≤ 15 min</button>
+  </div>
+  <div class="recipes-grid" id="rec-container"></div>
+</div>
+
+
+<!-- ══════════════ YAZIO ══════════════ -->
+<div class="panel" id="p-yazio">
+  <div style="margin-bottom:6px;"><div class="section-title">📱 Yazio Setup</div>
+  <div class="section-sub" style="margin-bottom:18px;">Genau was du in Yazio eintragen sollst – Schritt für Schritt</div></div>
+
+  <!-- Profil Setup -->
+  <div class="info-box green" style="margin-bottom:14px;">
+    <div class="ib-title g">Schritt 1: Profil korrekt einrichten</div>
+    <div class="ib-body">
+      Yazio → <strong>Profil → Körperdaten</strong><br>
+      · Geschlecht: Männlich<br>
+      · Alter: 29 Jahre<br>
+      · Größe: 185 cm<br>
+      · Gewicht: 92 kg<br>
+      · Ziel: <strong>Abnehmen</strong> (Yazio setzt dann automatisch ein Defizit)<br>
+      · Aktivitätslevel: <strong>Sehr aktiv</strong> (3× Laufen + 2× Gym/Woche)
+    </div>
+  </div>
+
+  <!-- Kalorienziel -->
+  <div style="margin-bottom:14px;">
+    <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">Schritt 2: Kalorienziel manuell überschreiben</div>
+    <div style="padding:14px 16px;border-radius:10px;background:var(--s1);border:1px solid var(--border2);">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Yazio → <strong style="color:var(--text)">Mehr → Einstellungen → Nährstoffziele → Kalorien</strong></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;">
+        <div style="padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid #451a03;text-align:center;">
+          <div style="font-size:9px;color:var(--amber);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Di + Sa</div>
+          <div style="font-size:22px;font-weight:500;color:var(--text);">3.050</div>
+          <div style="font-size:10px;color:var(--muted);">kcal · Hartes Training</div>
+        </div>
+        <div style="padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid #1e3a5f;text-align:center;">
+          <div style="font-size:9px;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Mo + Fr</div>
+          <div style="font-size:22px;font-weight:500;color:var(--text);">2.750</div>
+          <div style="font-size:10px;color:var(--muted);">kcal · Gym-Tag</div>
+        </div>
+        <div style="padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid #0a2a2a;text-align:center;">
+          <div style="font-size:9px;color:var(--teal);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Do</div>
+          <div style="font-size:22px;font-weight:500;color:var(--text);">2.600</div>
+          <div style="font-size:10px;color:var(--muted);">kcal · Regen-Lauf</div>
+        </div>
+        <div style="padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--border2);text-align:center;">
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Mi + So</div>
+          <div style="font-size:22px;font-weight:500;color:var(--text);">2.400</div>
+          <div style="font-size:10px;color:var(--muted);">kcal · Ruhetag</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--muted);padding:8px 10px;background:var(--bg);border-radius:6px;border:1px solid var(--faint);">
+        💡 <strong style="color:var(--text)">Tipp:</strong> Yazio erlaubt kein automatisches Carb Cycling – du musst das Ziel manuell jeden Abend für den nächsten Tag anpassen. Am einfachsten: Wochentag anschauen, oben nachschlagen, eintragen.
+      </div>
+    </div>
+  </div>
+
+  <!-- Makroziele -->
+  <div style="margin-bottom:14px;">
+    <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">Schritt 3: Makro-Ziele einstellen</div>
+    <div style="padding:14px 16px;border-radius:10px;background:var(--s1);border:1px solid var(--border2);">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">Yazio → <strong style="color:var(--text)">Mehr → Einstellungen → Nährstoffziele → Makros</strong><br>Auf <strong style="color:var(--text)">„Gramm"</strong> umstellen (nicht Prozent!)</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;">
+        <div style="padding:12px 14px;border-radius:8px;background:var(--bg);border-left:3px solid var(--purple);">
+          <div style="font-size:12px;font-weight:500;color:var(--purple);margin-bottom:6px;">🥚 Protein – täglich gleich</div>
+          <div style="font-size:20px;font-weight:500;color:var(--text);">185 g</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px;line-height:1.6;">Auf <strong style="color:var(--text)">allen Tagen identisch</strong> – Protein bleibt konstant egal ob Rest- oder Trainingstag. Schützt Muskelmasse im Defizit.</div>
+        </div>
+        <div style="padding:12px 14px;border-radius:8px;background:var(--bg);border-left:3px solid var(--green);">
+          <div style="font-size:12px;font-weight:500;color:var(--green);margin-bottom:6px;">🫒 Fett – täglich gleich</div>
+          <div style="font-size:20px;font-weight:500;color:var(--text);">80 g</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px;line-height:1.6;">Ebenfalls <strong style="color:var(--text)">konstant</strong> – wichtig für Testosteron, Hormone und Sättigung. Nicht weiter reduzieren.</div>
+        </div>
+        <div style="padding:12px 14px;border-radius:8px;background:var(--bg);border-left:3px solid var(--amber);">
+          <div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:6px;">🍚 Carbs – variabel je Tag</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px;line-height:1.8;">
+            Di + Sa: <strong style="color:var(--text)">395 g</strong><br>
+            Mo + Fr: <strong style="color:var(--text)">320 g</strong><br>
+            Do: <strong style="color:var(--text)">275 g</strong><br>
+            Mi + So: <strong style="color:var(--text)">240 g</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tracking Tipps -->
+  <div style="margin-bottom:14px;">
+    <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">Schritt 4: Tracking-Strategie</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;">
+      <div style="padding:13px 14px;border-radius:10px;background:var(--s1);border:1px solid var(--border2);">
+        <div style="font-size:12px;font-weight:500;color:var(--teal);margin-bottom:6px;">✅ Was tracken</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.8;">
+          · Alles was du isst – auch Öl beim Kochen<br>
+          · Getränke mit Kalorien (Milch, Säfte)<br>
+          · Snacks konsequent eintragen<br>
+          · Roh-Gewicht bei Fleisch/Tofu (nicht gegart)
+        </div>
+      </div>
+      <div style="padding:13px 14px;border-radius:10px;background:var(--s1);border:1px solid var(--border2);">
+        <div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:6px;">⚡ Yazio Sport-Kalorien</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.8;">
+          · Yazio zeigt "verbrannte Kalorien" beim Sport – <strong style="color:var(--text)diese NICHT aufessen</strong><br>
+          · Die TDEE (~3.200) ist bereits mit Training eingerechnet<br>
+          · Sport-Kalorien in Yazio ignorieren oder Feature deaktivieren
+        </div>
+      </div>
+      <div style="padding:13px 14px;border-radius:10px;background:var(--s1);border:1px solid var(--border2);">
+        <div style="font-size:12px;font-weight:500;color:var(--purple);margin-bottom:6px;">📊 Wöchentliche Kontrolle</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.8;">
+          · Gewicht immer morgens nüchtern, nach dem Klo<br>
+          · Nur wöchentlicher Schnitt zählt, nicht Tagesschwankungen<br>
+          · Ziel: –0,3 bis –0,5 kg/Woche<br>
+          · Mehr als –0,7 kg/Woche = Kalorien erhöhen
+        </div>
+      </div>
+      <div style="padding:13px 14px;border-radius:10px;background:var(--s1);border:1px solid var(--border2);">
+        <div style="font-size:12px;font-weight:500;color:var(--green);margin-bottom:6px;">🔄 Anpassung nach 4 Wochen</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.8;">
+          · Kein Gewichtsverlust nach 3 Wochen → –150 kcal<br>
+          · Leistung im Training einbricht → +200 kcal (Carbs)<br>
+          · Gewicht fällt > 0,7 kg/Woche → +150–200 kcal<br>
+          · Alles im Gleichgewicht → nichts ändern ✓
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Yazio Wochenübersicht Cheatsheet -->
+  <div style="margin-bottom:14px;">
+    <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">Dein Yazio Cheatsheet – Screenshot & speichern</div>
+    <div style="padding:16px;border-radius:10px;background:var(--s1);border:2px solid var(--border);">
+      <div style="display:grid;grid-template-columns:auto 1fr 1fr 1fr 1fr;gap:0;font-size:11px;">
+        <div style="padding:6px 10px;background:var(--s2);border-bottom:1px solid var(--faint);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">TAG</div>
+        <div style="padding:6px 10px;background:var(--s2);border-bottom:1px solid var(--faint);font-size:9px;color:var(--purple);text-transform:uppercase;letter-spacing:1px;text-align:center;">PROTEIN</div>
+        <div style="padding:6px 10px;background:var(--s2);border-bottom:1px solid var(--faint);font-size:9px;color:var(--amber);text-transform:uppercase;letter-spacing:1px;text-align:center;">CARBS</div>
+        <div style="padding:6px 10px;background:var(--s2);border-bottom:1px solid var(--faint);font-size:9px;color:var(--green);text-transform:uppercase;letter-spacing:1px;text-align:center;">FETT</div>
+        <div style="padding:6px 10px;background:var(--s2);border-bottom:1px solid var(--faint);font-size:9px;color:var(--blue);text-transform:uppercase;letter-spacing:1px;text-align:center;">KCAL</div>
+
+<div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);font-size:11px;color:#3ecf8e">Mo – Limbs</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--purple)">185 g</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--amber)">320 g</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--green)">80 g</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--blue)">2.750</div>
+<div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);font-size:11px;color:#f59e0b">Di – Intervall</div><div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);text-align:center;color:var(--purple)">185 g</div><div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);text-align:center;color:var(--amber)">395 g</div><div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);text-align:center;color:var(--green)">80 g</div><div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);text-align:center;color:var(--blue)">3.050</div>
+<div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);font-size:11px;color:#374151">Mi – Ruhe</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--purple)">185 g</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--amber)">240 g</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--green)">80 g</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--blue)">2.400</div>
+<div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);font-size:11px;color:#2dd4bf">Do – Regen-Lauf</div><div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);text-align:center;color:var(--purple)">185 g</div><div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);text-align:center;color:var(--amber)">275 g</div><div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);text-align:center;color:var(--green)">80 g</div><div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);text-align:center;color:var(--blue)">2.600</div>
+<div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);font-size:11px;color:#60a5fa">Fr – Torso</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--purple)">185 g</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--amber)">320 g</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--green)">80 g</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--blue)">2.750</div>
+<div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);font-size:11px;color:#f59e0b">Sa – Long Run</div><div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);text-align:center;color:var(--purple)">185 g</div><div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);text-align:center;color:var(--amber)">395 g</div><div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);text-align:center;color:var(--green)">80 g</div><div style="padding:7px 10px;background:var(--s2);border-bottom:1px solid var(--faint);text-align:center;color:var(--blue)">3.050</div>
+<div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);font-size:11px;color:#374151">So – Mobility</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--purple)">185 g</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--amber)">240 g</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--green)">80 g</div><div style="padding:7px 10px;background:var(--bg);border-bottom:1px solid var(--faint);text-align:center;color:var(--blue)">2.400</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box amber">
+    <div class="ib-title a">🎯 Realistisches Ziel bis 20.09. (18 Wochen)</div>
+    <div class="ib-body">
+      Bei konsequentem Tracking und Training kannst du in 18 Wochen realistisch erreichen:<br><br>
+      <strong>Fettabbau:</strong> ~4–6 kg · <strong>Muskelaufbau:</strong> ~2–3 kg (Returner-Vorteil)<br>
+      <strong>Gewicht auf der Waage:</strong> ca. –3 kg (der Rest ist Körperzusammensetzung)<br>
+      <strong>Körperfett sinkt:</strong> ~3–4% → deutlich sichtbarere Muskeln<br><br>
+      Das ist der Hybrid-Körper: schlanker durch den Laufsport, definierter durch das Krafttraining.
+    </div>
+  </div>
+</div>
+
+<footer>Vegetarischer Ernährungsplan · Halbmarathon 20.09.2026 · 29 J · 185 cm · 92 kg · ~2.750 kcal Ø · Body Recomposition</footer>
+
+<script>
+const days = [
+  {
+    name:"Montag", note:"Gym-Tag (Limbs – Beine & Arme)", kcal:2750,
+    tags:["<span class='badge prep'>Gym</span>","<span class='badge protein'>Bein-Fokus</span>"],
+    meals:[
+      {time:"07:00",name:"Protein-Pancakes",desc:"2 Eier + 60 g Haferflocken + 1 Messlöffel Proteinpulver + Banane – gebacken. Mit Joghurt und Beeren. Beine brauchen Carbs vor schwerem Training.",prot:30,kcal:460},
+      {time:"10:00",name:"Snack: Edamame + Reiswaffel",desc:"150 g Edamame (aufgetaut) + 2 Reiswaffeln mit Hüttenkäse – sättigend, bürotauglich",prot:22,kcal:250},
+      {time:"12:30",name:"Mittagessen: Tofu-Bowl mit Erdnusssoße",desc:"150 g Tofu (angebraten) + 130 g Quinoa + Brokkoli + Möhren + Erdnusssoße – Meal-Prep oder frisch",prot:38,kcal:540},
+      {time:"15:30",name:"Pre-Gym: Reiswaffel + Honig",desc:"3 Reiswaffeln + 1 EL Honig – 45 min vor dem Limbs-Training, schnelle Energie für Kniebeuge & Beinpresse",prot:3,kcal:160},
+      {time:"18:00",name:"Post-Gym Recovery-Shake",desc:"2 Messlöffel Proteinpulver + Banane + 250 ml Hafermilch – direkt nach Limbs im Recovery-Fenster",prot:40,kcal:380},
+      {time:"20:00",name:"After Gym: Linsen-Dal mit Reis",desc:"200 g rote Linsen + Kokosmilch + Tomaten + Kreuzkümmel + Kurkuma. Mit 100 g Basmati-Reis. Gut für Muskelregeneration.",prot:36,kcal:580},
+    ]
+  },
+  {
+    name:"Dienstag", note:"Lauftag – Intervalltraining", kcal:2700,
+    tags:["<span class='badge fast'>Lauftag</span>","<span class='badge prep'>Carb-Fokus</span>"],
+    meals:[
+      {time:"07:00",name:"Haferbrei",desc:"70 g Haferflocken + 300 ml Milch/Hafermilch + 1 Banane + 1 EL Erdnussmus + Honig – warm",prot:20,kcal:480},
+      {time:"10:00",name:"Snack: 2 Eier + Reiswaffel",desc:"2 hartgekochte Eier + 2 Reiswaffeln mit Hüttenkäse",prot:18,kcal:200},
+      {time:"12:30",name:"Vollkornnudeln mit Linsenbolognese",desc:"100 g Vollkornnudeln (trocken) + 150 g Linsen + Tomatensoße + Parmesan + Gemüse",prot:30,kcal:560},
+      {time:"15:30",name:"Pre-Run Snack",desc:"1 Banane + 1 EL Erdnussmus – 45 min vor dem Lauf",prot:7,kcal:270},
+      {time:"18:30",name:"Post-Run: Protein-Shake",desc:"2 Messlöffel Proteinpulver + Banane + 250 ml Hafermilch + 1 EL Chia – direkt nach dem Lauf",prot:38,kcal:380},
+      {time:"20:00",name:"Abendessen: Feta-Gemüse-Pfanne",desc:"200 g TK-Gemüse + 100 g Feta + Kichererbsen (Dose) + Olivenöl + Knoblauch + Zitrone. Mit Vollkornbrot.",prot:28,kcal:450},
+    ]
+  },
+  {
+    name:"Mittwoch", note:"Ruhetag – kein Training", kcal:2400,
+    tags:["<span class='badge office'>Bürotag</span>","<span class='badge prep'>Ausgeglichen</span>"],
+    meals:[
+      {time:"07:00",name:"Scrambled Eggs & Toast",desc:"3 Eier + 50 g Spinat + 2 Scheiben Vollkornbrot + Tomatenscheiben + Kräuter",prot:28,kcal:420},
+      {time:"10:00",name:"Büro-Snack: Edamame",desc:"150 g Edamame (aufgetaut) + Meersalz – in Dose mitgebracht",prot:17,kcal:190},
+      {time:"12:30",name:"Meal-Prep Bowl: Kichererbsen-Salat",desc:"200 g Kichererbsen + Quinoa + Gurke + Tomate + Petersilie + Zitrone-Tahini-Dressing. Im Glas vorbereitet.",prot:26,kcal:480},
+      {time:"15:30",name:"Büro-Snack: Apfel + Cashews",desc:"1 Apfel + 30 g Cashews – transportfähig, sättigend",prot:7,kcal:230},
+      {time:"19:00",name:"Abendessen: Tempeh-Stir-Fry",desc:"200 g Tempeh (angebraten) + Brokkoli + Paprika + Sojasoße + Ingwer + Knoblauch. Mit Jasminreis.",prot:38,kcal:520},
+      {time:"21:30",name:"Kleiner Snack",desc:"100 g Magerquark + Beeren + Chia",prot:15,kcal:130},
+    ]
+  },
+  {
+    name:"Donnerstag", note:"Regenerationslauf (5–7 km locker)", kcal:2600,
+    tags:["<span class='badge fast'>Regen-Lauf</span>","<span class='badge office'>Bürotag</span>"],
+    meals:[
+      {time:"07:00",name:"Overnight Oats",desc:"60 g Haferflocken + 200 ml Hafermilch + 1 EL Chia + Beeren + 1 EL Mandelmus – abends vorbereitet",prot:22,kcal:420},
+      {time:"10:00",name:"Snack: Hüttenkäse + Reiswaffeln",desc:"150 g Hüttenkäse + 3 Reiswaffeln + Kirschtomaten – leicht, bürotauglich",prot:20,kcal:200},
+      {time:"12:30",name:"Mittagessen: Quinoa-Tabbouleh mit Feta",desc:"150 g Quinoa + Feta + Tomate + Gurke + Petersilie + Zitronendressing – Meal-Prep aus dem Kühlschrank",prot:26,kcal:460},
+      {time:"15:00",name:"Pre-Run Snack (30–45 min vorher)",desc:"1 Banane – schnelle Energie für den lockeren Lauf, leicht verdaulich",prot:1,kcal:90},
+      {time:"17:30",name:"Post-Run: Protein-Shake",desc:"1 Messlöffel Proteinpulver + 250 ml Hafermilch + 1 EL Erdnussmus – Recovery nach dem Lauf",prot:30,kcal:280},
+      {time:"19:30",name:"Abendessen: Linsen-Dal mit Reis",desc:"200 g rote Linsen + Kokosmilch + Tomaten + Kreuzkümmel + Kurkuma. Mit 100 g Basmati-Reis.",prot:34,kcal:520},
+      {time:"21:00",name:"Abend-Snack: Magerquark",desc:"100 g Magerquark + Zimt + Beeren – langsames Protein über Nacht",prot:15,kcal:110},
+    ]
+  },
+  {
+    name:"Freitag", note:"Gym-Tag (Torso – Oberkörper)", kcal:2750,
+    tags:["<span class='badge prep'>Gym</span>","<span class='badge protein'>Oberkörper</span>"],
+    meals:[
+      {time:"07:00",name:"Overnight Oats",desc:"60 g Haferflocken + 200 ml Hafermilch + 1 EL Chia + Beeren + 1 EL Mandelmus – abends vorbereitet. Kein schweres Frühstück vor Torso-Tag nötig.",prot:22,kcal:420},
+      {time:"10:00",name:"Snack: Hüttenkäse-Bowl",desc:"200 g Hüttenkäse + Kirschtomate + Gurke + Prise Salz – leicht, viel Protein",prot:24,kcal:130},
+      {time:"12:30",name:"Mittagessen: Quinoa-Bowl mit Tofu",desc:"150 g Quinoa + 150 g Tofu (angebraten) + Paprika + Zucchini + Tahini-Dressing",prot:38,kcal:520},
+      {time:"15:30",name:"Pre-Gym: Reiswaffel + Honig",desc:"3 Reiswaffeln + 1 EL Honig – 45 min vor Torso-Training. Beine bleiben frisch für den Long Run morgen.",prot:3,kcal:160},
+      {time:"18:00",name:"Post-Gym Recovery-Shake",desc:"2 Messlöffel Proteinpulver + Banane + 250 ml Hafermilch – direkt nach Torso im Recovery-Fenster",prot:40,kcal:380},
+      {time:"20:00",name:"Abendessen: Süßkartoffel-Bowl",desc:"2 Süßkartoffeln (gebacken) + schwarze Bohnen + Avocado + griechischer Joghurt + Limette. Carbs aufladen für den Long Run morgen!",prot:28,kcal:580},
+    ]
+  },
+  {
+    name:"Samstag", note:"Long Run + Recovery", kcal:2900,
+    tags:["<span class='badge fast'>Long Run</span>","<span class='badge prep'>Carb-Loading</span>"],
+    meals:[
+      {time:"07:00",name:"Pre-Run: Haferbrei",desc:"80 g Haferflocken + Banane + Honig + Hafermilch – 2 h vor dem Lauf. Einfach, bewährt.",prot:18,kcal:520},
+      {time:"09:00",name:"Während Long Run (ab 10 km)",desc:"1–2 Medjool-Datteln oder Gel + ausreichend Wasser mitnehmen",prot:1,kcal:100},
+      {time:"11:30",name:"Post-Run Recovery",desc:"Sofort: Protein-Shake (35 g P) + Banane – das Recovery-Fenster beginnt direkt nach dem Lauf",prot:37,kcal:400},
+      {time:"13:30",name:"Mittagessen: Pasta mit Linsenbolognese",desc:"150 g Vollkornnudeln + Linsen + Tomaten + Parmesan + frisches Basilikum. Grosse Portion für Glykogenauffüllung.",prot:35,kcal:620},
+      {time:"16:00",name:"Snack: Greek Yogurt Bowl",desc:"200 g griechischer Joghurt + Müsli + Beeren + Honig + Walnüsse",prot:20,kcal:380},
+      {time:"19:00",name:"Abendessen: Gemüse-Curry",desc:"Kichererbsen + Kokosmilch + Spinat + Tomate + Curry + Ingwer. Mit Basmatireis. Entspanntes Abendessen.",prot:28,kcal:560},
+    ]
+  },
+  {
+    name:"Sonntag", note:"Mobility & Stabilität + Meal Prep", kcal:2400,
+    tags:["<span class='badge prep'>Mobility</span>","<span class='badge office'>Meal Prep</span>"],
+    meals:[
+      {time:"09:00",name:"Ausgiebiges Frühstück",desc:"3 Rühreier + 50 g Spinat + 2 Scheiben Vollkornbrot + Avocado + Kirschtomaten – Zeit nehmen",prot:30,kcal:500},
+      {time:"12:30",name:"Leichtes Mittagessen",desc:"Große Gemüsesuppe aus Resten + 2 Scheiben Vollkornbrot + Hüttenkäse",prot:22,kcal:380},
+      {time:"15:00",name:"Meal-Prep Zeit (45 min)",desc:"Quinoa/Reis kochen · Eier kochen · Gemüse schneiden · Overnight Oats für Mo vorbereiten",prot:0,kcal:0},
+      {time:"15:30",name:"Snack während Prep",desc:"Handvoll Nüsse + Datteln + Tee",prot:6,kcal:220},
+      {time:"19:00",name:"Abendessen: Warmer Linsensalat",desc:"200 g Puy-Linsen + Karotten + Feta + Walnüsse + Balsamico-Senf-Dressing. Entspannt, nährstoffreich.",prot:30,kcal:480},
+      {time:"21:00",name:"Abend-Snack",desc:"100 g Magerquark + Beeren + Zimt – langsames Protein über Nacht",prot:15,kcal:120},
+    ]
+  },
+];
+
+const quickDinners = [
+  {time:"10 min",name:"Rührei-Wrap",ing:"3 Eier + 50 g Blattspinat + 2 Vollkornwraps + Feta + Tomatensoße. Eier scramble, Wrap belegen, fertig.",prot:"32 g P"},
+  {time:"12 min",name:"Tofu-Stir-Fry",ing:"200 g Tofu (gewürfelt) + TK-Gemüse + 2 EL Sojasoße + Sesamöl + Knoblauch. Mit vorgegartem Reis aus dem Kühlschrank.",prot:"35 g P"},
+  {time:"15 min",name:"Linsen-Tomaten-Suppe",ing:"1 Dose Linsen + 1 Dose Tomaten + Brühe + Knoblauch + Kreuzkümmel. Erhitzen, pürieren (optional), fertig.",prot:"22 g P"},
+  {time:"10 min",name:"Kichererbsen-Pfanne",ing:"1 Dose Kichererbsen (abgespült) + Paprika + Soße aus Tahini + Zitrone + Knoblauch. Schwenken, mit Pitabrot.",prot:"18 g P"},
+  {time:"15 min",name:"Pasta Aglio e Olio + Ei",ing:"100 g Nudeln + Olivenöl + 4 Knoblauchzehen + 2 Spiegeleier on top + Parmesan + Chili. Klassiker.",prot:"28 g P"},
+  {time:"8 min",name:"Avocado-Ei-Toast",ing:"2 Eier (beliebig) + 1 Avocado + 2 Scheiben Vollkornbrot + Limette + Chili + optional Hüttenkäse.",prot:"22 g P"},
+  {time:"15 min",name:"Süßkartoffel-Bowl",ing:"1 Süßkartoffel (Mikrowelle 8 min) + 1 Dose schwarze Bohnen + griechischer Joghurt + Limette + Paprikapulver.",prot:"24 g P"},
+  {time:"12 min",name:"Queso-Quesadilla",ing:"2 Wraps + Refried Beans + Cheddar/Mozzarella + Paprika. In der Pfanne 3 min je Seite. Mit Joghurt als Sour Cream.",prot:"26 g P"},
+  {time:"20 min",name:"Gemüse-Omelett",ing:"4 Eier + 100 g TK-Gemüse (aufgetaut) + Feta + Kräuter. Mit Vollkornbrot und gemischtem Salat.",prot:"34 g P"},
+  {time:"15 min",name:"Miso-Suppe mit Tofu",ing:"Misobrühe + 150 g Tofu + TK-Edamame + Pak-Choi + Sojanudeln. Asiatisch, wärmend, leicht.",prot:"28 g P"},
+  {time:"12 min",name:"Hummus-Pasta",ing:"100 g Nudeln + 80 g Hummus + Kirschtomaten + Zitrone + Olivenöl + Petersilie. Ungewöhnlich gut.",prot:"22 g P"},
+  {time:"20 min",name:"Dal vom Vortag + Ei",ing:"Übrig gebliebenes Dal aufwärmen + 2 Spiegeleier oben drauf + Vollkornbrot. Meal-Prep zahlt sich aus.",prot:"36 g P"},
+];
+
+function buildDays(){
+  const c = document.getElementById("days-container");
+  days.forEach((d,i)=>{
+    const totalP = d.meals.reduce((s,m)=>s+m.prot,0);
+    const html = `
+    <div class="day-block" id="day-${i}">
+      <div class="day-header" onclick="toggleDay(${i})">
+        <div class="day-left">
+          <span class="day-name">${d.name}</span>
+          <span class="day-kcal">~${d.kcal} kcal · ~${totalP} g P</span>
+          <div class="day-tags">${d.tags.join("")}</div>
+          <span style="font-size:11px;color:var(--muted);font-style:italic;">${d.note}</span>
+        </div>
+        <span class="day-chev">▼</span>
+      </div>
+      <div class="day-body">
+        ${d.meals.filter(m=>m.prot>0||m.name.includes("Prep")).map(m=>`
+          <div class="meal-row">
+            <div class="meal-time">${m.time}</div>
+            <div class="meal-content">
+              <div class="meal-name">${m.name}</div>
+              <div class="meal-desc">${m.desc}</div>
+            </div>
+            <div class="meal-macros">
+              ${m.prot>0?`<div class="meal-prot">${m.prot} g P</div>`:""}
+              ${m.kcal>0?`<div class="meal-kcal">${m.kcal} kcal</div>`:""}
+            </div>
+          </div>
+        `).join("")}
+        <div style="padding:10px 16px;border-top:1px solid var(--faint);display:flex;justify-content:space-between;font-size:11px;color:var(--muted);">
+          <span>Gesamt: <strong style="color:var(--purple)">${totalP} g Protein</strong></span>
+          <span>~${d.kcal} kcal</span>
+        </div>
+      </div>
+    </div>`;
+    c.innerHTML += html;
+  });
+}
+
+function buildQuick(){
+  const c = document.getElementById("quick-container");
+  quickDinners.forEach(q=>{
+    c.innerHTML += `
+    <div class="quick-card">
+      <div class="quick-head">
+        <span class="quick-time">⏱ ${q.time}</span>
+        <span class="quick-name">${q.name}</span>
+      </div>
+      <div class="quick-ing">${q.ing}</div>
+      <div class="quick-prot">${q.prot}</div>
+    </div>`;
+  });
+}
+
+function toggleDay(i){
+  document.getElementById(`day-${i}`).classList.toggle("open");
+}
+
+function tab(name){
+  document.querySelectorAll(".nb").forEach((b,i)=>b.classList.toggle("on",["woche","snacks","quick","rezepte","timing","einkauf","yazio"][i]===name));
+  document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id===`p-${name}`));
+}
+
+buildDays();
+buildQuick();
+
+const recipes = [
+  // ── FRÜHSTÜCK ──────────────────────────────────────────────────────────────
+  {
+    id:0, name:"Protein-Haferbrei mit Beeren", cat:["frühstück"], color:"#f59e0b",
+    time:"10 min", servings:"1", prot:32, carbs:65, fat:12, kcal:500,
+    desc:"Cremiger Haferbrei mit extra Protein – ideal 2 h vor dem Laufen oder nach dem Aufstehen.",
+    tags:["<span class='badge prep'>Frühstück</span>","<span class='badge fast'>10 min</span>"],
+    zutaten:["80 g Haferflocken (Zartblatt)","300 ml Hafermilch oder Vollmilch","1 Messlöffel Proteinpulver (Vanille, ~25 g)","1 Banane, in Scheiben","100 g Tiefkühlbeeren (aufgetaut)","1 EL Mandelmus","1 TL Honig","Prise Zimt"],
+    steps:["Haferflocken und Milch in einen Topf geben, bei mittlerer Hitze unter Rühren 4–5 Min. köcheln lassen bis cremig.","Vom Herd nehmen, Proteinpulver einrühren – direkt nach dem Kochen, nicht beim Kochen (Eiweiß denaturiert sonst).","In Schüssel füllen, mit Bananen und Beeren belegen.","Mandelmus, Honig und Zimt oben drauf. Sofort servieren."]
+  },
+  {
+    id:1, name:"Overnight Oats Deluxe", cat:["frühstück","meal-prep"], color:"#8b5cf6",
+    time:"5 min (abends)", servings:"1", prot:28, carbs:60, fat:14, kcal:470,
+    desc:"Abends in 5 min vorbereiten, morgens aus dem Kühlschrank – perfekt fürs Büro.",
+    tags:["<span class='badge prep'>Frühstück</span>","<span class='badge office'>Büro</span>","<span class='badge meal-prep'>Meal-Prep</span>"],
+    zutaten:["60 g Haferflocken","200 ml Hafermilch oder Proteinmilch","150 g griechischer Joghurt (10% Fett)","1 EL Chiasamen","1 EL Hanfsamen","100 g Beeren (frisch oder TK)","1 EL Mandelmus oder Erdnussmus","1 TL Ahornsirup"],
+    steps:["Haferflocken, Milch, Joghurt, Chia und Hanfsamen in ein Glas oder eine Dose rühren.","Mandelmus und Ahornsirup unterrühren.","Beeren oben drauf legen (wenn TK: leicht auftauen lassen).","Deckel drauf, mindestens 6 h oder über Nacht in den Kühlschrank. Hält 2 Tage.","Morgens direkt aus dem Glas essen – auch kalt sehr gut."]
+  },
+  {
+    id:2, name:"Grünes Protein-Smoothie-Bowl", cat:["frühstück"], color:"#22c55e",
+    time:"8 min", servings:"1", prot:30, carbs:55, fat:10, kcal:440,
+    desc:"Dick genug zum Essen mit dem Löffel – mehr Nährstoffe als ein normaler Smoothie.",
+    tags:["<span class='badge prep'>Frühstück</span>","<span class='badge fast'>8 min</span>"],
+    zutaten:["2 gefrorene Bananen (Tip: überreife schälen & einfrieren)","100 g TK-Spinat (kein Geschmack, viele Nährstoffe)","1 Messlöffel Proteinpulver","150 ml Hafermilch","Topping: Granola, Beeren, Kokosflocken, Kürbiskerne, Bananen-Scheiben"],
+    steps:["Gefrorene Bananen, Spinat, Proteinpulver und Hafermilch in den Mixer.","Mixen bis sehr cremig und dick – weniger Milch macht es dicker.","In eine Schüssel füllen – die Masse sollte stehen, nicht fließen.","Toppings dekorativ darauf anrichten. Sofort servieren bevor es auftaut."]
+  },
+  {
+    id:3, name:"Shakshuka (Eier in Tomatensoße)", cat:["frühstück","abendessen"], color:"#ef4444",
+    time:"20 min", servings:"2", prot:34, carbs:28, fat:22, kcal:450,
+    desc:"Israelisches Gericht – reiche Tomatensoße mit Eiern, perfekt für Wochenende oder schnelles Abendessen.",
+    tags:["<span class='badge prep'>Frühstück</span>","<span class='badge fast'>Abendessen</span>"],
+    zutaten:["4 Eier","1 Dose Tomaten (400 g)","1 rote Paprika, gewürfelt","1 Zwiebel, gewürfelt","3 Knoblauchzehen","1 TL Kreuzkümmel","1 TL geräuchertes Paprikapulver","½ TL Chiliflocken","Olivenöl, Salz, Pfeffer","Feta zum Bestreuen, frische Petersilie","Vollkornbrot zum Dippen"],
+    steps:["Olivenöl in großer Pfanne erhitzen. Zwiebel 3 Min. anbraten, Knoblauch und Paprika dazu, weitere 3 Min.","Gewürze (Kreuzkümmel, Paprika, Chili) einrühren, 1 Min. rösten.","Tomaten aus der Dose hinzufügen, zerdrücken. 5 Min. bei mittlerer Hitze einköcheln lassen.","Mit Löffel 4 Mulden in die Soße drücken, Eier hineinschlagen.","Deckel drauf, 5–7 Min. auf niedrigster Hitze – Eiweiß fest, Eigelb noch weich.","Mit Feta, Petersilie und Brot servieren."]
+  },
+  {
+    id:4, name:"Eiermuffins für die Woche", cat:["frühstück","meal-prep"], color:"#f59e0b",
+    time:"25 min (Prep)", servings:"6", prot:18, carbs:8, fat:14, kcal:220,
+    desc:"Sonntags backen, ganze Woche frühstücken. Proteinreich, portionierbar, bürotauglich.",
+    tags:["<span class='badge meal-prep'>Meal-Prep</span>","<span class='badge office'>Büro</span>"],
+    zutaten:["8 Eier","100 g Blattspinat (frisch oder TK aufgetaut)","80 g Feta, zerbröckelt","1 rote Paprika, fein gewürfelt","4 Kirschtomaten, halbiert","Salz, Pfeffer, Kräuter der Provence","Optional: 50 g geriebener Käse oben drauf"],
+    steps:["Ofen auf 180°C vorheizen. Muffinform fetten oder Papierförmchen verwenden.","Eier in einer Schüssel verquirlen, kräftig würzen.","Spinat, Feta, Paprika und Tomaten einrühren.","Masse gleichmäßig in 6–8 Muffinformen füllen (¾ voll).","20 Min. backen bis Mitte gestockt. Mit Zahnstocher testen.","Abkühlen lassen, in Dose im Kühlschrank 5 Tage haltbar."]
+  },
+  // ── MITTAGESSEN ────────────────────────────────────────────────────────────
+  {
+    id:5, name:"Meal-Prep Buddha Bowl", cat:["mittagessen","meal-prep"], color:"#2dd4bf",
+    time:"30 min (Prep)", servings:"3", prot:38, carbs:70, fat:18, kcal:580,
+    desc:"Einmal gekocht, drei Mittagessen. Jede Portion anders durch wechselnde Toppings.",
+    tags:["<span class='badge meal-prep'>Meal-Prep</span>","<span class='badge office'>Büro</span>"],
+    zutaten:["300 g Quinoa (trocken)","2 Dosen Kichererbsen","2 Süßkartoffeln, gewürfelt","200 g Babyspinat","2 Avocados","Tahini-Dressing: 3 EL Tahini, 2 EL Zitronensaft, 1 Knoblauchzehe, Wasser zum Verdünnen","Olivenöl, Salz, Paprikapulver, Kreuzkümmel","Optional: Kürbiskerne, Granatapfelkerne"],
+    steps:["Ofen 200°C. Kichererbsen und Süßkartoffeln auf Blech, Olivenöl und Gewürze drüber, 25 Min. rösten.","Parallel Quinoa kochen: 1 Teil Quinoa, 2 Teile Wasser, 15 Min. köcheln, 5 Min. quellen lassen.","Tahini-Dressing mischen: alles verrühren, mit Wasser auf gewünschte Konsistenz verdünnen.","In 3 Meal-Prep-Boxen aufteilen: Quinoa als Basis, Kichererbsen, Süßkartoffel, Spinat.","Avocado erst beim Essen hinzufügen (nicht mit einpacken). Dressing separat.","Hält 4 Tage im Kühlschrank."]
+  },
+  {
+    id:6, name:"Linsensuppe mit Zitrone & Kreuzkümmel", cat:["mittagessen","meal-prep","abendessen"], color:"#f97316",
+    time:"25 min", servings:"4", prot:24, carbs:55, fat:8, kcal:420,
+    desc:"Dicke, wärmende Suppe – günstig, einfach, voller Protein. Schmeckt aufgewärmt noch besser.",
+    tags:["<span class='badge meal-prep'>Meal-Prep</span>","<span class='badge fast'>25 min</span>"],
+    zutaten:["400 g rote Linsen (trocken)","1,5 l Gemüsebrühe","2 Möhren, gewürfelt","2 Zwiebeln, gewürfelt","4 Knoblauchzehen","2 TL Kreuzkümmel","1 TL Kurkuma","½ TL Chiliflocken","Saft von 1 Zitrone","Olivenöl","Vollkornbrot zum Servieren"],
+    steps:["Olivenöl im Topf erhitzen, Zwiebeln goldbraun anbraten (5 Min.). Knoblauch, Möhren und Gewürze dazu, 2 Min. rösten.","Linsen und Brühe hinzufügen. Zum Kochen bringen, dann 15 Min. bei mittlerer Hitze köcheln bis Linsen zerfallen.","Stabmixer kurz rein – halb pürieren für cremige aber noch stückige Textur.","Zitronensaft einrühren, abschmecken.","Mit Olivenöl beträufeln und Brot servieren. In Dose 5 Tage haltbar."]
+  },
+  {
+    id:7, name:"Quinoa-Tabbouleh mit Feta", cat:["mittagessen","meal-prep"], color:"#84cc16",
+    time:"20 min", servings:"3", prot:22, carbs:52, fat:16, kcal:440,
+    desc:"Frischer Orientalischer Salat, der kalt serviert wird. Perfekt fürs Büro.",
+    tags:["<span class='badge meal-prep'>Meal-Prep</span>","<span class='badge office'>Büro</span>"],
+    zutaten:["250 g Quinoa (trocken)","200 g Feta, gewürfelt","4 Tomaten, gewürfelt","1 Gurke, gewürfelt","1 rote Zwiebel, fein gewürfelt","großer Bund frische Petersilie","½ Bund frische Minze","Dressing: 4 EL Olivenöl, Saft von 2 Zitronen, Salz, Pfeffer, 1 TL Sumach optional"],
+    steps:["Quinoa nach Packungsanleitung kochen, dann vollständig abkühlen lassen (wichtig!).","Kräuter fein hacken – viel davon, Tabbouleh lebt von den Kräutern.","Gemüse würfeln, Feta zerbröckeln.","Dressing mischen.","Alles zusammen vermengen. Mindestens 30 Min. ziehen lassen.","Kalt servieren. Im Kühlschrank 4 Tage haltbar."]
+  },
+  {
+    id:8, name:"Tofu-Bowl mit Erdnusssoße", cat:["mittagessen","abendessen"], color:"#a855f7",
+    time:"25 min", servings:"2", prot:42, carbs:58, fat:20, kcal:580,
+    desc:"Asiatisch inspiriert – knuspriger Tofu trifft cremige Erdnusssoße. Sehr sättigend.",
+    tags:["<span class='badge prep'>Mittagessen</span>","<span class='badge fast'>Abendessen</span>"],
+    zutaten:["400 g fester Tofu","200 g Jasminreis","200 g TK-Brokkoli","2 Möhren, in Streifen","Erdnusssoße: 3 EL Erdnussmus, 2 EL Sojasoße, 1 EL Reisessig, 1 TL Ahornsirup, 1 Knoblauchzehe gepresst, Chili, warmes Wasser","Sesamöl, Sesam zum Bestreuen","Frühlingszwiebeln"],
+    steps:["Tofu in Würfel schneiden, mit Küchenpapier trocken tupfen (wichtig für Knusprigkeit!).","In beschichteter Pfanne mit Sesamöl bei hoher Hitze 8–10 Min. anbraten bis alle Seiten goldbraun.","Parallel Reis kochen, Brokkoli und Möhren in Wasser blanchieren (3 Min.) oder in der Pfanne schmoren.","Erdnusssoße: alle Zutaten verrühren, mit warmem Wasser zur gewünschten Konsistenz verdünnen.","Bowl zusammenstellen: Reis, Gemüse, Tofu. Erdnusssoße großzügig drüber.","Mit Sesam und Frühlingszwiebeln bestreuen."]
+  },
+  // ── ABENDESSEN ─────────────────────────────────────────────────────────────
+  {
+    id:9, name:"Cremiges Kichererbsen-Curry", cat:["abendessen","meal-prep"], color:"#f59e0b",
+    time:"30 min", servings:"4", prot:26, carbs:68, fat:18, kcal:540,
+    desc:"Reichhaltiges indisches Curry – macht Eindruck, ist aber überraschend einfach. Schmeckt aufgewärmt noch besser.",
+    tags:["<span class='badge meal-prep'>Meal-Prep</span>","<span class='badge fast'>Abendessen</span>"],
+    zutaten:["2 Dosen Kichererbsen (800 g abgetropft)","1 Dose Kokosmilch (400 ml)","1 Dose Tomaten (400 g)","2 Zwiebeln, gewürfelt","4 Knoblauchzehen","1 EL frischer Ingwer, gerieben","2 TL Garam Masala","1 TL Kurkuma","1 TL Kreuzkümmel","100 g Blattspinat","Saft von ½ Zitrone","Reis oder Naan zum Servieren"],
+    steps:["Öl erhitzen, Zwiebeln 5 Min. goldbraun anbraten. Knoblauch und Ingwer dazu, 1 Min.","Alle Gewürze einrühren, 1 Min. rösten bis es duftet.","Tomaten hinzufügen, 3 Min. einköcheln.","Kokosmilch und Kichererbsen dazu, alles gut vermengen.","15 Min. bei mittlerer Hitze köcheln bis Soße eingedickt.","Spinat unterrühren bis er zusammenfällt. Zitronensaft, abschmecken.","Mit Reis servieren. Im Kühlschrank 5 Tage haltbar."]
+  },
+  {
+    id:10, name:"Gebackene Süßkartoffel mit Kräuterquark", cat:["abendessen"], color:"#fb923c",
+    time:"45 min (15 min aktiv)", servings:"2", prot:28, carbs:72, fat:12, kcal:510,
+    desc:"Ofen macht die Arbeit. Einfacher kann Abendessen nicht sein.",
+    tags:["<span class='badge fast'>Abendessen</span>","<span class='badge prep'>Einfach</span>"],
+    zutaten:["3 mittelgroße Süßkartoffeln","400 g Magerquark","1 EL Olivenöl","2 Knoblauchzehen, gepresst","Bund Schnittlauch, gehackt","Bund Petersilie, gehackt","Saft von ½ Zitrone","Salz, Pfeffer","Optional: 80 g Feta, zerbröckelt, Kürbiskerne"],
+    steps:["Ofen auf 200°C vorheizen. Süßkartoffeln waschen, mit Gabel mehrmals einstechen.","Auf Backblech legen, 35–40 Min. backen bis Gabel leicht eindringt.","Kräuterquark: Quark mit Knoblauch, Schnittlauch, Petersilie, Zitrone, Salz, Pfeffer verrühren.","Süßkartoffeln der Länge nach aufschneiden, mit Gabel aufdrücken.","Quark großzügig drauf, Feta und Kürbiskerne darüber.","Optional: 2 Spiegeleier dazu für noch mehr Protein."]
+  },
+  {
+    id:11, name:"Zucchini-Fritters mit Joghurt-Dip", cat:["abendessen"], color:"#4ade80",
+    time:"25 min", servings:"2", prot:30, carbs:35, fat:16, kcal:400,
+    desc:"Krosse Zucchini-Taler – Fingerfood das satt macht. Gut auch kalt als Snack.",
+    tags:["<span class='badge fast'>Abendessen</span>","<span class='badge fast'>25 min</span>"],
+    zutaten:["3 mittelgroße Zucchini","3 Eier","80 g Feta, zerbröckelt","4 EL Haferflocken oder Mehl","Bund Frühlingszwiebeln","Bund Dill oder Minze","Salz, Pfeffer","Olivenöl zum Braten","Dip: 200 g griechischer Joghurt, 1 Knoblauchzehe, Dill, Zitrone, Salz"],
+    steps:["Zucchini grob reiben, in Sieb geben, 1 TL Salz drüber, 10 Min. ziehen lassen. Dann kräftig ausdrücken – das ist wichtig, sonst werden sie matschig!","Ausgedrückte Zucchini mit Eiern, Feta, Haferflocken, Frühlingszwiebeln und Kräutern vermischen. Mit Salz und Pfeffer würzen.","Öl in Pfanne bei mittlerer Hitze erhitzen. Esslöffelweise Masse in die Pfanne geben, flach drücken.","Je 3–4 Min. pro Seite braten bis goldbraun und fest.","Joghurt-Dip rühren. Mit Fladenbrot oder Salat servieren."]
+  },
+  {
+    id:12, name:"Schwarze-Bohnen-Enchiladas", cat:["abendessen","meal-prep"], color:"#ef4444",
+    time:"35 min", servings:"3", prot:34, carbs:75, fat:20, kcal:600,
+    desc:"Mexikanischer Klassiker – vegetarisch mit schwarzen Bohnen. Macht die Familie satt.",
+    tags:["<span class='badge meal-prep'>Meal-Prep</span>","<span class='badge fast'>Abendessen</span>"],
+    zutaten:["6 Weizentortillas","2 Dosen schwarze Bohnen","200 g Mais (Dose oder TK)","200 g geriebener Käse (Cheddar oder Mozzarella)","1 Dose Tomaten (400 g)","1 Zwiebel","2 Knoblauchzehen","2 TL Kreuzkümmel, 1 TL Paprika, Chiliflocken","Saure Sahne oder griechischer Joghurt zum Servieren","Frischer Koriander, Limette"],
+    steps:["Ofen auf 190°C vorheizen. Soße: Tomaten mit Knoblauch, Zwiebel, Gewürzen 10 Min. köcheln lassen.","Bohnen abspülen, grob zerdrücken. Mit Mais und der Hälfte des Käses mischen.","Tortillas mit Bohnenmasse füllen, einrollen, dicht nebeneinander in Auflaufform legen.","Tomatensoße über Enchiladas gießen, restlichen Käse drüber.","25 Min. backen bis Käse blubbert und goldbraun.","Mit Joghurt, Koriander und Limette servieren."]
+  },
+  // ── MEAL PREP BASICS ───────────────────────────────────────────────────────
+  {
+    id:13, name:"Linsen-Bolognese (großer Batch)", cat:["mittagessen","abendessen","meal-prep"], color:"#dc2626",
+    time:"40 min", servings:"6", prot:28, carbs:60, fat:10, kcal:450,
+    desc:"Vegetarische Bolognese die jeden Fleischfresser überzeugt. Für 3 Tage Pasta, Lasagne oder Wraps.",
+    tags:["<span class='badge meal-prep'>Meal-Prep</span>"],
+    zutaten:["400 g Puy-Linsen oder braune Linsen","2 Dosen Tomaten (800 g)","200 ml Rotwein (optional)","2 Zwiebeln","4 Knoblauchzehen","3 Möhren","3 Stangen Sellerie","100 g getrocknete Pilze (eingeweicht und gehackt – geben Umami-Tiefe)","2 EL Tomatenmark","Olivenöl, Salz, Pfeffer","Frischer Thymian, Lorbeerblatt","Parmesan zum Servieren"],
+    steps:["Olivenöl erhitzen, Zwiebeln, Möhren, Sellerie fein würfeln und 8 Min. anschwitzen (Soffritto).","Knoblauch und Pilze dazu, 2 Min. Tomatenmark einrühren, 2 Min. rösten.","Wein dazu (wenn verwendet), 3 Min. einkochen lassen.","Linsen, Tomaten, 300 ml Wasser und Kräuter dazu. Alles vermengen.","30 Min. bei niedriger Hitze köcheln, gelegentlich rühren bis Linsen gar.","Kräftig abschmecken. Über Nudeln, als Lasagne-Füllung oder in Wraps verwenden.","Im Kühlschrank 5 Tage, eingefroren 3 Monate haltbar."]
+  },
+  {
+    id:14, name:"Energy Balls (Batch für 2 Wochen)", cat:["meal-prep"], color:"#a855f7",
+    time:"20 min + 30 min kühlen", servings:"20 Stück", prot:8, carbs:22, fat:9, kcal:200,
+    desc:"Sonntags einmal machen, zwei Wochen Snacks. Kein Backen nötig.",
+    tags:["<span class='badge meal-prep'>Meal-Prep</span>","<span class='badge office'>Büro</span>"],
+    zutaten:["300 g Haferflocken","200 g Medjool-Datteln (entkernt)","4 EL Erdnussmus oder Mandelmus","3 EL Kakaopulver (ungesüßt)","2 EL Chiasamen","2 EL Hanfsamen","2 EL Proteinpulver (optional, Schokolade)","2 EL Kokosflocken zum Wälzen","1 TL Vanilleextrakt","Prise Meersalz","2–4 EL Wasser (nach Bedarf)"],
+    steps:["Datteln 10 Min. in heißem Wasser einweichen, dann abgießen und grob hacken.","Alle Zutaten außer Kokosflocken in eine große Schüssel geben.","Mit den Händen gut verkneten bis eine klebrige Masse entsteht. Bei Bedarf Wasser hinzufügen.","Wenn die Masse zu fest: mehr Datteln. Zu klebrig: mehr Haferflocken.","Walnussgroße Bällchen formen, in Kokosflocken wälzen.","30 Min. im Kühlschrank fest werden lassen.","In Dose im Kühlschrank 2 Wochen haltbar, eingefroren 3 Monate."]
+  },
+  {
+    id:15, name:"Geröstete Kichererbsen (knusprig)", cat:["meal-prep"], color:"#f59e0b",
+    time:"35 min", servings:"4", prot:12, carbs:30, fat:6, kcal:220,
+    desc:"Knuspriger Protein-Snack für unterwegs. Besser als Chips und hält eine Woche.",
+    tags:["<span class='badge meal-prep'>Meal-Prep</span>","<span class='badge office'>Büro</span>"],
+    zutaten:["2 Dosen Kichererbsen (800 g abgetropft)","2 EL Olivenöl","1 TL geräuchertes Paprikapulver","1 TL Kreuzkümmel","½ TL Knoblauchpulver","½ TL Chiliflocken (optional)","1 TL Salz","Optional: Currypulver, Zitronenabrieb"],
+    steps:["Ofen auf 200°C vorheizen. Kichererbsen sehr gut trocken tupfen – je trockener, desto knuspriger.","Auf Backblech verteilen (eine Schicht!), 15 Min. ohne Öl vorbacken zum Trocknen.","Herausnehmen, mit Öl und Gewürzen schwenken.","Weitere 15–20 Min. backen bis goldbraun und knusprig. Zwischendurch wenden.","Vollständig abkühlen lassen auf dem Blech – werden beim Abkühlen noch knuspriger.","In luftdichter Dose bei Raumtemperatur 1 Woche haltbar."]
+  },
+];
+
+function buildRecipes(filter='alle'){
+  const c = document.getElementById('rec-container');
+  c.innerHTML = '';
+  const filtered = filter === 'alle' ? recipes : recipes.filter(r => r.cat.includes(filter) || (filter === 'schnell' && r.time.includes('min') && parseInt(r.time) <= 15));
+  filtered.forEach(r => {
+    c.innerHTML += `
+    <div class="rec-card" data-id="${r.id}">
+      <div class="rec-img" style="background:${r.color}"></div>
+      <div class="rec-body">
+        <div class="rec-head">
+          <div class="rec-name">${r.name}</div>
+          <div class="rec-badges">${r.tags.join('')}</div>
+        </div>
+        <div class="rec-meta">
+          <div class="rec-meta-item">⏱ <span>${r.time}</span></div>
+          <div class="rec-meta-item">👤 <span>${r.servings} Port.</span></div>
+          <div class="rec-meta-item" style="color:var(--purple)">💪 <span>${r.prot}g P</span></div>
+        </div>
+        <div class="rec-desc">${r.desc}</div>
+        <button class="rec-toggle" onclick="toggleRec(${r.id})">▼ Rezept anzeigen</button>
+      </div>
+      <div class="rec-detail" id="rd-${r.id}">
+        <div class="rec-section">Zutaten</div>
+        <ul class="rec-ing-list">${r.zutaten.map(z=>`<li>${z}</li>`).join('')}</ul>
+        <div class="rec-section">Zubereitung</div>
+        <div class="rec-steps">${r.steps.map(s=>`<div class="rec-step"><div class="rec-step-text">${s}</div></div>`).join('')}</div>
+        <div class="rec-macros">
+          <div class="rec-macro"><div class="v" style="color:var(--purple)">${r.prot}g</div><div class="l">Protein</div></div>
+          <div class="rec-macro"><div class="v" style="color:var(--amber)">${r.carbs}g</div><div class="l">Carbs</div></div>
+          <div class="rec-macro"><div class="v" style="color:var(--green)">${r.fat}g</div><div class="l">Fett</div></div>
+          <div class="rec-macro"><div class="v" style="color:var(--blue)">${r.kcal}</div><div class="l">kcal</div></div>
+        </div>
+      </div>
+    </div>`;
+  });
+}
+
+function toggleRec(id){
+  const d = document.getElementById('rd-'+id);
+  const b = d.previousElementSibling;
+  d.classList.toggle('open');
+  b.textContent = d.classList.contains('open') ? '▲ Rezept schließen' : '▼ Rezept anzeigen';
+}
+
+function filterRec(cat, btn){
+  document.querySelectorAll('.rf-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  buildRecipes(cat);
+}
+
+buildRecipes();
+
+</script>
+</body>
+</html>

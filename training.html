@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sub-2 Halbmarathon Trainingsplan</title>
+<style>
+  :root {
+    --bg:#0f0f13; --surface:#15151f; --surface2:#1a1a2e;
+    --border:#1e1e2e; --border2:#2a2a3a;
+    --text:#e8e0d5; --muted:#6b7280; --faint:#2e2e3a;
+    --blue:#4f8ef7; --green:#3ecf8e; --amber:#f5a623;
+    --red:#f06060; --purple:#b07ef5; --teal:#38bdf8;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:Georgia,serif; background:var(--bg); min-height:100vh; color:var(--text); }
+  button { font-family:inherit; }
+
+  header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); padding:44px 24px 28px; text-align:center; border-bottom:1px solid var(--border2); position:relative; overflow:hidden; }
+  header::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 30% 50%,rgba(79,142,247,0.08) 0%,transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(168,85,247,0.06) 0%,transparent 60%); }
+  .h-inner { position:relative; z-index:1; }
+  .h-eye { font-size:11px; letter-spacing:4px; color:var(--muted); text-transform:uppercase; margin-bottom:10px; font-family:monospace; }
+  h1 { font-size:clamp(24px,5vw,44px); font-weight:normal; color:#f0ece6; }
+  h1 span { color:var(--blue); }
+  .h-sub { margin-top:8px; color:var(--muted); font-size:14px; font-style:italic; }
+  .schedule { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; max-width:500px; margin:20px auto 0; }
+  .sched-cell { text-align:center; padding:8px 2px; border-radius:6px; }
+  .sched-cell .d { font-size:9px; color:var(--muted); margin-bottom:3px; font-family:monospace; }
+  .sched-cell .c { font-size:9px; font-weight:600; line-height:1.3; }
+
+  nav { display:flex; border-bottom:1px solid var(--border); background:#12121c; flex-wrap:wrap; position:sticky; top:0; z-index:100; }
+  .nb { padding:13px 16px; background:none; border:none; border-bottom:2px solid transparent; color:var(--muted); cursor:pointer; font-size:12px; font-family:monospace; transition:color .2s,border-color .2s; }
+  .nb.on { color:var(--blue); border-bottom-color:var(--blue); }
+  .nb:hover:not(.on){ color:var(--text); }
+
+  .panel { display:none; max-width:920px; margin:0 auto; padding:20px 14px; }
+  .panel.on { display:block; }
+
+  .legend { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; padding:12px 14px; background:var(--surface2); border-radius:8px; }
+  .legend-item { display:flex; align-items:center; gap:5px; }
+  .legend-item span { font-size:11px; color:var(--muted); }
+  .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .sq { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+
+  .ref-box { margin-bottom:10px; padding:12px 14px; background:#12121c; border-radius:8px; border:1px solid var(--border); }
+  .ref-title { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:2px; font-family:monospace; margin-bottom:8px; }
+  .ref-grid { display:grid; gap:6px; }
+  .ref-card { padding:7px 10px; border-radius:6px; background:var(--surface); }
+  .ref-card .z { font-size:10px; color:var(--muted); }
+  .ref-card .p { font-size:12px; color:var(--text); font-family:monospace; font-weight:600; }
+
+  .week-card { margin-bottom:5px; background:var(--surface); border-radius:10px; border:1px solid var(--border); overflow:hidden; }
+  .week-card.deload { border-color:#1e3a5f; }
+  .week-card.taper { border-color:#1e3a5f; }
+  .week-card.race { border-color:#a855f7; }
+  .week-head { width:100%; padding:12px 16px; background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; color:var(--text); }
+  .week-left { display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+  .week-num { font-family:monospace; font-size:11px; color:#374151; }
+  .week-title { font-size:14px; font-weight:500; }
+  .week-dates { font-size:11px; color:var(--muted); font-family:monospace; }
+  .week-tag { font-size:9px; padding:2px 7px; border-radius:999px; letter-spacing:1px; text-transform:uppercase; font-family:monospace; }
+  .week-right { display:flex; align-items:center; gap:7px; }
+  .week-dots { display:flex; gap:3px; }
+  .chev { color:var(--muted); font-size:11px; }
+  .week-body { display:none; padding:0 16px 16px; border-top:1px solid var(--border); }
+  .week-card.open .week-body { display:block; }
+  .sec-label { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:2.5px; font-family:monospace; margin:12px 0 7px; }
+  .runs-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:7px; }
+  .run-card { padding:10px 12px; border-radius:8px; background:var(--bg); }
+  .run-head { display:flex; align-items:center; gap:6px; margin-bottom:3px; flex-wrap:wrap; }
+  .run-day { font-size:9px; font-family:monospace; background:#0f0f18; padding:1px 6px; border-radius:3px; }
+  .run-name { font-size:12px; font-weight:600; color:var(--text); }
+  .run-detail { font-size:11px; color:var(--muted); line-height:1.6; }
+  .run-kad { display:inline-flex; align-items:center; gap:4px; margin-top:5px; background:#1a2a1a; border:1px solid #2a4a2a; border-radius:5px; padding:2px 8px; }
+  .run-kad .l { font-size:9px; color:#3ecf8e; }
+  .run-kad .v { font-size:10px; color:var(--text); font-family:monospace; font-weight:600; }
+  .gym-row { display:flex; gap:7px; flex-wrap:wrap; align-items:flex-start; }
+  .gym-badge { padding:6px 12px; border-radius:8px; background:var(--bg); border:1px solid #1e3a5f; font-size:12px; color:var(--teal); }
+  .gym-note { padding:6px 10px; border-radius:8px; background:var(--bg); border:1px solid #1a2a1a; font-size:11px; color:var(--muted); font-style:italic; max-width:360px; }
+  .rest-row { padding:8px 12px; border-radius:8px; background:var(--bg); border:1px solid var(--faint); font-size:11px; color:#374151; display:flex; align-items:center; gap:6px; }
+
+  .info-box { margin-bottom:14px; padding:14px 16px; background:var(--surface2); border-radius:10px; }
+  .info-box .t { font-size:13px; font-weight:600; margin-bottom:5px; }
+  .info-box p { font-size:12px; color:var(--muted); line-height:1.75; }
+  .info-box strong { color:var(--text); }
+  .plans-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; }
+  .plan-card { background:var(--surface); border-radius:10px; border:1px solid var(--border); overflow:hidden; }
+  .plan-head { padding:13px 16px; border-bottom:1px solid var(--border); }
+  .plan-label { font-size:14px; font-weight:bold; letter-spacing:2px; }
+  .plan-sub { font-size:11px; color:var(--muted); margin-top:2px; }
+  .ex-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; }
+  .ex-row:not(:last-child) { border-bottom:1px solid #1a1a2a; }
+  .ex-name { font-size:12px; color:var(--text); }
+  .ex-note { font-size:10px; color:var(--muted); margin-top:1px; }
+  .ex-sets { font-size:11px; font-family:monospace; white-space:nowrap; margin-left:10px; }
+  .tip-card { padding:15px; background:var(--surface); border-radius:10px; border:1px solid var(--border); display:flex; gap:12px; margin-bottom:8px; }
+  .tip-icon { font-size:22px; line-height:1; flex-shrink:0; }
+  .tip-t { font-size:13px; font-weight:600; color:var(--text); margin-bottom:4px; }
+  .tip-d { font-size:12px; color:var(--muted); line-height:1.7; }
+  footer { text-align:center; padding:24px; color:#374151; font-size:10px; font-family:monospace; letter-spacing:2px; }
+  @media (max-width:500px){ .week-dates{display:none;} .sched-cell .c{font-size:8px;} }
+
+  .week-card.current { border-color:var(--green); box-shadow:0 0 0 1px var(--green) inset; }
+  .now-badge { font-size:9px; padding:2px 7px; border-radius:999px; background:#0a2a1a; color:#6ee7b7; font-family:monospace; }
+  .phase-bar { display:flex; gap:3px; margin-bottom:16px; }
+  .phase-seg { padding:9px 8px; border-radius:6px; min-width:0; background:var(--surface); border-top:3px solid; }
+  .phase-seg .pn { font-size:11px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .phase-seg .pd { font-size:9px; color:var(--muted); font-family:monospace; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ms-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:6px; }
+  @media (max-width:600px){ .phase-bar{flex-wrap:wrap;} .phase-seg{flex:1 1 30% !important;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-inner">
+    <div class="h-eye" id="h-eye"></div>
+    <h1>Halbmarathon<span> sub 2:00</span></h1>
+    <p class="h-sub">Ziel-Pace 5:41/km · Ganzkörper A/B · Standardwoche ab Laufstart:</p>
+    <div class="schedule" id="header-schedule"></div>
+  </div>
+</header>
+
+<nav>
+  <button class="nb on" onclick="tab('plan')">📅 Wochenplan</button>
+  <button class="nb" onclick="tab('gym')">💪 Gym A/B</button>
+  <button class="nb" onclick="tab('mobility')">🧘 Mobility</button>
+  <button class="nb" onclick="tab('tips')">💡 Hinweise</button>
+</nav>
+
+<div class="panel on" id="p-plan">
+  <div class="phase-bar" id="phase-bar"></div>
+  <div class="legend" id="legend"></div>
+  <div class="ref-box">
+    <div class="ref-title">🎯 Pace-Zonen Zielniveau Frühjahr (min/km) – anfangs gilt nur „Locker"</div>
+    <div class="ref-grid" id="pace-zones" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr));"></div>
+  </div>
+  <div class="ref-box" style="background:#0f1a0f;border-color:#1a3a1a;">
+    <div class="ref-title" style="color:#3ecf8e;">🏁 Checkpoints auf dem Weg zu sub 2:00</div>
+    <div class="ms-grid" id="milestones"></div>
+  </div>
+  <div class="ref-box" style="background:#0f1a0f;border-color:#1a3a1a;">
+    <div class="ref-title" style="color:#3ecf8e;">👟 Kadenz · aktuell 163 spm</div>
+    <div class="ref-grid" id="cadence-prog" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr));"></div>
+  </div>
+  <div id="weeks-container"></div>
+</div>
+
+<div class="panel" id="p-gym"></div>
+<div class="panel" id="p-mobility"></div>
+<div class="panel" id="p-tips"></div>
+
+<footer id="footer"></footer>
+
+<script>
+// ════════ EINSTELLUNGEN ════════
+// Renntag hier anpassen (ein Sonntag). Der Plan rechnet die letzten 16 Wochen automatisch rückwärts.
+const RACE = "2027-05-16";
+const START = "2026-09-28"; // Montag der ersten Woche
+
+// ════════ DATUM ════════
+const D = s => { const [y,m,d] = s.split("-").map(Number); return new Date(Date.UTC(y,m-1,d)); };
+const DAYMS = 864e5;
+const START_D = D(START), RACE_D = D(RACE);
+const TOTAL = Math.floor(Math.round((RACE_D - START_D)/DAYMS)/7) + 1;
+const fmt = (d,o={day:"2-digit",month:"2-digit"}) => d.toLocaleDateString("de-DE",{...o,timeZone:"UTC"});
+const weekMon = n => new Date(START_D.getTime() + (n-1)*7*DAYMS);
+const getWeekDates = n => { const s = weekMon(n); const e = new Date(s.getTime()+6*DAYMS); return `${fmt(s)} – ${fmt(e)}`; };
+
+// ════════ TYPEN ════════
+const typeColors = {
+  easy:  { dot:"#3ecf8e", label:"Locker" },
+  long:  { dot:"#4f8ef7", label:"Long Run" },
+  tempo: { dot:"#f06060", label:"Schwelle" },
+  speed: { dot:"#f5a623", label:"Intervall / Technik" },
+  hmp:   { dot:"#b07ef5", label:"HM-Renntempo" },
+  test:  { dot:"#38bdf8", label:"Test" },
+  race:  { dot:"#e879f9", label:"Rennen" },
+  alt:   { dot:"#6b7280", label:"Alternativ (Rad, Gehen)" },
+};
+const tagStyle = {
+  "LAUFPAUSE": { bg:"#1f2937", color:"#d1d5db" },
+  "COMEBACK":  { bg:"#0a2a1a", color:"#6ee7b7" },
+  "BASIS":     { bg:"#0a2a2a", color:"#5eead4" },
+  "ENTLASTUNG":{ bg:"#064e3b", color:"#6ee7b7" },
+  "TEST":      { bg:"#0c4a6e", color:"#7dd3fc" },
+  "SCHWELLE":  { bg:"#450a0a", color:"#fca5a5" },
+  "SPEZIFISCH":{ bg:"#3b0764", color:"#d8b4fe" },
+  "PEAK":      { bg:"#7c2d12", color:"#fdba74" },
+  "TAPER":     { bg:"#1e3a8a", color:"#93c5fd" },
+  "RACE WEEK": { bg:"#4c1d95", color:"#c4b5fd" },
+};
+const phases = [
+  { key:"pause", name:"Laufpause",  color:"#6b7280" },
+  { key:"come",  name:"Comeback",   color:"#3ecf8e" },
+  { key:"basis", name:"Basis",      color:"#2dd4bf" },
+  { key:"thr",   name:"Schwelle",   color:"#f06060" },
+  { key:"spec",  name:"Spezifisch", color:"#b07ef5" },
+  { key:"taper", name:"Taper",      color:"#60a5fa" },
+];
+
+// ════════ WOCHEN GENERIEREN ════════
+const R = (day,name,type,detail,kad) => ({day,name,type,detail,kad});
+const GYM_AB = ["Wochentag: Ganzkörper A","Wochenende: Ganzkörper B"];
+const weeks = [];
+const add = (phase, tag, runs, gym, gymNote) => weeks.push({ week:weeks.length+1, phase, tag, runs, gym, gymNote });
+
+// Phase 1 – Laufpause (3 Wochen)
+const altRun = [R("frei","Kein Laufen","alt","Optional: lockeres Radfahren, Spaziergänge, Schwimmen – alles, was nicht wehtut und nicht stößt. Die Beine erholen sich vom Halbmarathon.")];
+add("pause","LAUFPAUSE", altRun, GYM_AB, "Einstiegswoche: 2 Sätze pro Übung, ca. 70–80 % der alten Gewichte, 3 Wdh. Reserve. Die Beine stecken noch im Halbmarathon.");
+add("pause","LAUFPAUSE", altRun, GYM_AB, "Voll einsteigen: alle Sätze, Doppelprogression. Ohne Laufen darfst du die Beine jetzt richtig fordern.");
+add("pause","LAUFPAUSE", altRun, GYM_AB, "Gewichte steigern, wo die obere Wdh.-Grenze in allen Sätzen sitzt. Beinpresse diese Woche noch mitnehmen – ab nächster Woche läufst du wieder.");
+
+// Phase 2 – Comeback (4 Wochen)
+const comeback = [
+  [3,4,5,"Erster Lauf nach der Pause: betont langsam, ruhig mit Gehpausen."],
+  [4,4,6,"Do am Ende 4× 20 s Steigerungen (locker, kein Sprint)."],
+  [5,5,8,"Do am Ende 6× 20 s Steigerungen."],
+  [4,4,6,"Entlastung – Körper verarbeitet den Wiedereinstieg."],
+];
+comeback.forEach(([di,dox,sa,note],i)=>{
+  add("come", i===3?"ENTLASTUNG":"COMEBACK", [
+    R("Di",`Locker ${di} km`,"easy","@ 6:50–7:20, Conversational Pace. HF ruhig halten, Pace ist egal.","163–166 spm"),
+    R("Do",`Locker ${dox} km`,"easy",note,"163–166 spm"),
+    R("Sa",`Long Run ${sa} km`,"long","Ganz locker @ 7:00+. Zeit auf den Beinen, nicht Tempo.","163–166 spm"),
+  ], GYM_AB, i===3 ? "Entlastungswoche: pro Übung 1 Satz weniger, Gewicht halten." : "Gym A am Tag nach dem Di-Lauf (z. B. Mi), Gym B am Tag nach dem Long Run.");
+});
+
+// Phase 3 – Basis (variable Länge)
+const BASIS = Math.max(0, TOTAL - 7 - 16);
+const basisQ = [
+  ["Locker 6 km + Steigerungen","speed","5 km locker, dann 6–8× 20 s Steigerungen mit voller Erholung. Schult Laufökonomie ohne Belastung."],
+  ["Bergsprints","speed","5 km locker, dazwischen 6–8× 15 s bergauf zügig, Gehpause runter. Kräftigt Waden und Schienbein, schont die Gelenke."],
+  ["Fahrtspiel","speed","2 km locker → 6× (1 min zügig ≈ 5:45 / 2 min locker) → 1,5 km locker. Erster sanfter Tempo-Reiz."],
+  ["Steady-Lauf 7 km","tempo","2 km locker → 20–25 min @ 6:10–6:30 → locker aus. Kontrolliert, nicht hart."],
+];
+let lastLong = 8;
+for(let i=0;i<BASIS;i++){
+  const last = i===BASIS-1, deload = last || i%4===3;
+  const blk = Math.min(3, Math.floor(i/4));
+  const doKm = 5 + Math.min(2, blk);
+  let di, sa, tag;
+  if(last){
+    tag = "TEST";
+    di = R("Di","Locker 5 km + Steigerungen","easy","Beine frisch machen für den Test.","165–168 spm");
+    sa = R("Sa","5-km-Test","test","2 km einlaufen, 5 km so schnell wie gleichmäßig möglich, 1–2 km auslaufen. Orientierung: ≤ 28:00 = auf Kurs, ≤ 27:00 = sehr gut. Danach Pace-Zonen neu einordnen.","168+ spm");
+  } else if(deload){
+    tag = "ENTLASTUNG";
+    di = R("Di","Locker 5 km + Steigerungen","easy","Entlastung: 4–6× 20 s Steigerungen, sonst ruhig.","165–168 spm");
+    sa = R("Sa",`Long Run ${lastLong-3} km`,"long","Kürzer als letzte Woche – Erholung ist Training.","165–168 spm");
+  } else {
+    tag = "BASIS";
+    lastLong = Math.min(15, lastLong+1);
+    const q = basisQ[blk];
+    di = R("Di",q[0],q[1],q[2],"165–168 spm");
+    sa = R("Sa",`Long Run ${lastLong} km`,"long","Locker @ 6:50–7:20. Ab 12 km Hydro Load/Gel mitnehmen und üben.","165–168 spm");
+  }
+  add("basis", tag, [di, R("Do",`Locker ${doKm} km`,"easy","Conversational Pace. Das ist deine Ausdauerbasis – 80 % des Trainings sehen so aus.","165–168 spm"), sa],
+    GYM_AB, deload ? "Entlastungswoche: pro Übung 1 Satz weniger, Gewicht halten." : "Aufbau: Doppelprogression, Gym A Mi, Gym B am Tag nach dem Long Run.");
+}
+
+// Phase 4 – Schwelle (8 Wochen)
+const thr = [
+  ["3× 8 min @ Schwelle",14,6,"SCHWELLE"],
+  ["3× 10 min @ Schwelle",15,7,"SCHWELLE"],
+  ["2× 15 min @ Schwelle",16,7,"SCHWELLE"],
+  [null,12,5,"ENTLASTUNG"],
+  ["4× 8 min @ Schwelle",16,7,"SCHWELLE"],
+  ["20 min am Stück @ Schwelle",17,7,"SCHWELLE"],
+  ["3× 12 min @ Schwelle",18,8,"SCHWELLE"],
+  [null,13,5,"ENTLASTUNG"],
+];
+thr.forEach(([q,sa,dox,tag],j)=>{
+  const di = q
+    ? R("Di",q,"tempo",`2 km einlaufen → ${q.replace(" @ Schwelle","")} @ 5:20–5:35 (2 min Trabpause) → 1,5 km aus. „Angenehm hart": kurze Sätze sprechen geht noch.`,"168+ spm")
+    : R("Di","Locker 6 km + Steigerungen","easy","Entlastung, keine harte Einheit.","166–168 spm");
+  const saRun = R("Sa",`Long Run ${sa} km`,"long", j===5||j===6 ? "Locker, die letzten 3 km steady @ 6:05–6:20." : "Locker @ 6:45–7:15, Verpflegung wie im Rennen.","166–168 spm");
+  add("thr", tag, [di, R("Do",`Locker ${dox} km`,"easy","Wirklich locker – nach der Schwelle am Di ist das Erholung.","166–168 spm"), saRun],
+    GYM_AB, tag==="ENTLASTUNG" ? "Entlastung: 1 Satz weniger pro Übung." : "Oberkörper voll, Beinübungen 1 Satz weniger – die Schwelle braucht frische Beine.");
+});
+
+// Phase 5 – Spezifisch (6 Wochen)
+const spec = [
+  ["5× 1 km @ 5:05–5:10","speed","2 min Trabpause. Hebt die Decke über deinem Renntempo.",7,"16 km, letzte 4 km @ HM-Tempo (5:35–5:40)","hmp","SPEZIFISCH"],
+  ["3× 3 km @ HM-Tempo","hmp","5:35–5:40, 3 min Trabpause. So fühlt sich sub 2:00 an.",7,"18 km locker","long","SPEZIFISCH"],
+  ["6× 1 km @ 5:00–5:05","speed","2 min Trabpause.",8,"18 km, davon 2× 5 km @ HM-Tempo","hmp","SPEZIFISCH"],
+  [null,"easy","",5,"10-km-Test","test","TEST"],
+  ["2× 5 km @ HM-Tempo","hmp","3 min Trabpause. Längster Renntempo-Block.",7,"20 km locker – längster Lauf","long","PEAK"],
+  ["4× 2 km @ 5:25–5:30","tempo","2 min Trabpause.",7,"16 km, davon 8 km @ HM-Tempo – Generalprobe (Kleidung, Frühstück, Verpflegung)","hmp","SPEZIFISCH"],
+];
+spec.forEach(([q,qt,qd,dox,sa,st,tag])=>{
+  const di = q ? R("Di",q,qt,`2 km einlaufen → ${q} → 1,5 km aus. ${qd}`,"168–172 spm") : R("Di","Locker 5 km + Steigerungen","easy","Beine frisch für den Test.","168 spm");
+  const saRun = st==="test"
+    ? R("Sa","10-km-Test","test","2 km einlaufen, 10 km gleichmäßig voll. ≤ 54:00 = sub 2:00 ist realistisch. 54–57 min = Ziel eher 2:00–2:05, Renntempo anpassen.","170+ spm")
+    : R("Sa",`Long Run ${sa.match(/^\d+/)[0]} km`,st,sa+(st==="hmp"?". Rest locker @ 6:45+.":" @ 6:45–7:15."),"168–170 spm");
+  add("spec", tag, [di, R("Do",`Locker ${dox} km`,"easy","Ruhig – die Qualität steckt in Di und Sa.","166–168 spm"), saRun],
+    GYM_AB, "Erhalt-Modus: 2 Sätze pro Übung, Gewicht halten. Laufen hat jetzt Priorität.");
+});
+
+// Phase 6 – Taper (2 Wochen)
+add("taper","TAPER",[
+  R("Di","3× 2 km @ HM-Tempo","hmp","2 km ein, 3 min Trabpause, 1,5 km aus. Tempo halten, Umfang runter.","170 spm"),
+  R("Do","Locker 5 km","easy","Ganz ruhig.","168 spm"),
+  R("Sa","Long Run 12 km","long","Locker, letzte 2 km @ HM-Tempo.","168 spm"),
+],["Wochentag: Ganzkörper A (leicht)"],"Nur eine Einheit, 2 Sätze, Beine sehr leicht. Kein Gym am Wochenende.");
+add("taper","RACE WEEK",[
+  R("Di","6 km mit 3× 1 km @ HM-Tempo","hmp","Beine wach halten, nicht ermüden.","170 spm"),
+  R("Do","Locker 4 km + Steigerungen","easy","4× 100 m flott. Ab heute Carb-Loading.","170 spm"),
+  R("Sa","Ausschütteln 15 min","easy","Ganz locker. Startsachen richten, früh schlafen.","—"),
+  R("So",`🏁 HALBMARATHON ${fmt(RACE_D)}`,"race","Start 5:45–5:50 für die ersten 3 km, dann auf 5:38–5:40 einpendeln. Ab km 16 zulegen, wenn noch was da ist. Keine Gehpausen mehr – nur kurz an den Stationen trinken.","170+ spm"),
+],[],"Kein Gym. Frische schlägt Fitness.");
+
+// ════════ HEADER / SCHEDULE ════════
+const weekSchedule = [
+  {d:"Mo", c:"Ruhe",       t:"rest", bc:"#1e1e2e", bg:"#0f0f18"},
+  {d:"Di", c:"Qualität",   t:"run",  bc:"#f06060", bg:"#2a0f0f"},
+  {d:"Mi", c:"Gym A",      t:"gym",  bc:"#3b82f6", bg:"#1e3a5f"},
+  {d:"Do", c:"Locker",     t:"run",  bc:"#3ecf8e", bg:"#0a2a1a"},
+  {d:"Fr", c:"Mobility",   t:"mob",  bc:"#f5a623", bg:"#3a2800"},
+  {d:"Sa", c:"Long Run",   t:"run",  bc:"#6366f1", bg:"#0d1a3a"},
+  {d:"So", c:"Gym B",      t:"gym",  bc:"#3b82f6", bg:"#1e3a5f"},
+];
+document.getElementById("h-eye").textContent = `${fmt(START_D,{day:"2-digit",month:"2-digit",year:"numeric"})} → ${fmt(RACE_D,{day:"2-digit",month:"2-digit",year:"numeric"})} · ${TOTAL} Wochen`;
+document.getElementById("footer").textContent = `SUB 2:00 · ${fmt(RACE_D,{day:"2-digit",month:"2-digit",year:"numeric"})} 🏁`;
+document.getElementById("header-schedule").innerHTML = weekSchedule.map(x =>
+  `<div class="sched-cell" style="background:${x.bg};border:1px solid ${x.bc};">
+    <div class="d">${x.d}</div>
+    <div class="c" style="color:${x.t==='rest'?'#374151':'var(--text)'}">${x.c}</div>
+  </div>`).join("");
+
+// ════════ PHASEN-LEISTE ════════
+document.getElementById("phase-bar").innerHTML = phases.map(p=>{
+  const ws = weeks.filter(w=>w.phase===p.key);
+  if(!ws.length) return "";
+  const s = weekMon(ws[0].week), e = new Date(weekMon(ws[ws.length-1].week).getTime()+6*DAYMS);
+  return `<div class="phase-seg" style="flex:${ws.length} 1 0;border-top-color:${p.color}">
+    <div class="pn" style="color:${p.color}">${p.name}</div>
+    <div class="pd">${fmt(s)}–${fmt(e)} · ${ws.length} Wo</div></div>`;
+}).join("");
+
+// ════════ LEGENDE, ZONEN, CHECKPOINTS, KADENZ ════════
+document.getElementById("legend").innerHTML =
+  Object.values(typeColors).map(v => `<div class="legend-item"><div class="dot" style="background:${v.dot}"></div><span>${v.label}</span></div>`).join("")
+  + `<div class="legend-item"><div class="sq" style="background:var(--blue)"></div><span>Gym</span></div>`;
+
+const paceZones = [["Locker","6:45–7:20","#3ecf8e"],["Steady","6:05–6:30","#60a5fa"],["HM-Renntempo","5:35–5:40","#b07ef5"],["Schwelle","5:20–5:35","#f06060"],["Intervall 1 km","5:00–5:10","#f5a623"]];
+document.getElementById("pace-zones").innerHTML = paceZones.map(([z,p,col]) =>
+  `<div class="ref-card" style="border-left:3px solid ${col}"><div class="z">${z}</div><div class="p">${p}</div></div>`).join("");
+
+const w5 = weeks.find(w=>w.runs.some(r=>r.name==="5-km-Test"));
+const w10 = weeks.find(w=>w.runs.some(r=>r.name==="10-km-Test"));
+const sat = w => fmt(new Date(weekMon(w.week).getTime()+5*DAYMS));
+const milestones = [
+  ["Heute","HM 2:17:54 · Pace 6:31","#6b7280"],
+  w5 ? [`5-km-Test · ${sat(w5)}`,"Ziel ≤ 28:00","#38bdf8"] : null,
+  w10 ? [`10-km-Test · ${sat(w10)}`,"Ziel ≤ 54:00","#38bdf8"] : null,
+  [`Renntag · ${fmt(RACE_D)}`,"< 2:00:00 · 5:41/km","#e879f9"],
+].filter(Boolean);
+document.getElementById("milestones").innerHTML = milestones.map(([l,v,c])=>
+  `<div class="ref-card" style="border-left:3px solid ${c}"><div class="z">${l}</div><div class="p">${v}</div></div>`).join("");
+
+const cadenceProg = [["Locker","165–168 spm","#3ecf8e"],["Schwelle","168–170 spm","#2dd4bf"],["Renntempo","170+ spm","#60a5fa"]];
+document.getElementById("cadence-prog").innerHTML = cadenceProg.map(([l,t,col]) =>
+  `<div class="ref-card" style="border:1px solid #1e2e1e;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:10px;color:var(--muted);font-family:monospace">${l}</span><span style="font-size:11px;color:${col};font-family:monospace;font-weight:600">${t}</span></div>`).join("");
+
+// ════════ WOCHEN RENDERN ════════
+const todayUTC = (()=>{ const n=new Date(); return Date.UTC(n.getFullYear(),n.getMonth(),n.getDate()); })();
+const CUR = Math.floor((todayUTC - START_D.getTime())/DAYMS/7) + 1;
+
+document.getElementById("weeks-container").innerHTML = weeks.map(w => {
+  const ts = tagStyle[w.tag];
+  const cls = [w.tag==="RACE WEEK"?"race":(w.tag==="ENTLASTUNG"||w.tag==="TAPER")?"deload":"", w.week===CUR?"current open":""].join(" ");
+  const dots = w.runs.map(r=>`<div class="dot" style="background:${typeColors[r.type].dot}"></div>`).join("")
+    + w.gym.map(()=>`<div class="sq" style="background:var(--blue)"></div>`).join("");
+  const runsHtml = w.runs.map(r=>{ const c = typeColors[r.type].dot; return `
+    <div class="run-card" style="border-left:3px solid ${c}">
+      <div class="run-head"><span class="run-day" style="color:${c};border:1px solid ${c}22;">${r.day}</span><span class="run-name">${r.name}</span></div>
+      <div class="run-detail">${r.detail}</div>
+      ${r.kad?`<div class="run-kad"><span class="l">👟 Kadenz</span><span class="v">${r.kad}</span></div>`:""}
+    </div>`; }).join("");
+  const gymHtml = w.gym.length
+    ? `<div class="gym-row">${w.gym.map(g=>`<div class="gym-badge">${g}</div>`).join("")}<div class="gym-note">${w.gymNote}</div></div>`
+    : `<div class="rest-row"><span style="font-style:italic">${w.gymNote}</span></div>`;
+  const mob = w.tag==="RACE WEEK" ? "Nach dem Rennen: locker gehen, sanft dehnen, viel trinken – und feiern."
+    : "2× pro Woche ~20 min Mobility + Stabi-Core (z. B. Fr und nach Gym B).";
+  return `
+  <div class="week-card ${cls}" id="week-${w.week}">
+    <button class="week-head" onclick="toggleWeek(${w.week})">
+      <div class="week-left">
+        <span class="week-num">${String(w.week).padStart(2,"0")}</span>
+        <span class="week-title">Woche ${w.week}</span>
+        <span class="week-dates">${getWeekDates(w.week)}</span>
+        <span class="week-tag" style="background:${ts.bg};color:${ts.color}">${w.tag}</span>
+        ${w.week===CUR?`<span class="now-badge">JETZT</span>`:""}
+      </div>
+      <div class="week-right"><div class="week-dots">${dots}</div><span class="chev" id="chev-${w.week}">${w.week===CUR?"▲":"▼"}</span></div>
+    </button>
+    <div class="week-body">
+      <div class="sec-label">🏃 Laufen</div>
+      <div class="runs-grid">${runsHtml}</div>
+      <div class="sec-label">💪 Fitnessstudio</div>
+      ${gymHtml}
+      <div class="sec-label">🧘 Mobility & Ruhe</div>
+      <div class="rest-row"><span style="font-style:italic">${mob} Mo = Ruhetag.</span></div>
+    </div>
+  </div>`;
+}).join("");
+if(CUR>=1 && CUR<=weeks.length){ const el=document.getElementById("week-"+CUR); if(el && el.scrollIntoView && CUR>2) setTimeout(()=>el.scrollIntoView({block:"center"}),100); }
+
+function toggleWeek(n){
+  const card = document.getElementById("week-"+n);
+  card.classList.toggle("open");
+  document.getElementById("chev-"+n).textContent = card.classList.contains("open")?"▲":"▼";
+}
+
+// ════════ GYM ════════
+const gymPlan = {
+  a: { label:"GANZKÖRPER A", subtitle:"Wochentag (Standard Mi) · kniedominant · ~55 min", color:"#4f8ef7",
+    exercises:[
+      {name:"Beinpresse",sets:"3 × 6–10",note:"Hauptübung Beine"},
+      {name:"Schrägbankdrücken",sets:"3 × 6–10",note:"Brust – oberer Anteil"},
+      {name:"Latziehen",sets:"3 × 8–12",note:"Rücken – Breite"},
+      {name:"Beinbeuger liegend",sets:"3 × 10–12",note:"Hamstrings, Kniestabilität"},
+      {name:"Seitheben",sets:"3 × 12–15",note:"Seitliche Schulter"},
+      {name:"Triceps Pushdown",sets:"3 × 10–12",note:"Trizeps"},
+      {name:"Waden Isolation",sets:"3 × 12–15",note:"Achilles- & Schienbeinschutz"},
+    ]},
+  b: { label:"GANZKÖRPER B", subtitle:"Wochenende (Tag nach Long Run) · hüftdominant, beinschonend · ~50 min", color:"#3ecf8e",
+    exercises:[
+      {name:"Hyperextensions",sets:"3 × 10–12",note:"Hintere Kette, optional mit Zusatzgewicht"},
+      {name:"Enges Rudern",sets:"3 × 8–12",note:"Rücken – Tiefe"},
+      {name:"Butterfly",sets:"3 × 10–12",note:"Brust"},
+      {name:"Beinstrecker",sets:"3 × 12–15",note:"Quad, kontrolliert"},
+      {name:"Reverse Butterfly",sets:"3 × 12–15",note:"Hintere Schulter & Haltung"},
+      {name:"Preacher Curls",sets:"3 × 10–12",note:"Bizeps"},
+      {name:"Seitheben",sets:"2 × 15",note:"Zweiter Schulterreiz der Woche"},
+      {name:"Tibialis Raises",sets:"2 × 15–20",note:"Neu: Schienbein-Prävention (Wand oder Gerät)"},
+    ]},
+};
+const box = (c,t,b) => `<div style="padding:10px 12px;border-radius:8px;background:var(--bg);border-left:3px solid ${c};"><div style="font-size:11px;font-weight:600;color:${c};margin-bottom:3px;">${t}</div><div style="font-size:11px;color:var(--muted);line-height:1.6;">${b}</div></div>`;
+document.getElementById("p-gym").innerHTML = `
+  <div class="info-box" style="border-left:3px solid var(--blue)">
+    <div class="t" style="color:var(--teal)">Warum Ganzkörper A/B statt Torso/Limbs?</div>
+    <p>Bei zwei Einheiten pro Woche trifft jeder Muskel <strong>zweimal statt einmal</strong> einen Reiz. Das ist für den Aufbau effizienter, bei gleicher Trainingszeit. Deine Übungen bleiben, sie sind nur neu verteilt. A trägt die schwere Beinarbeit, B ist bewusst beinschonend, weil sie nach dem Long Run liegt.</p>
+  </div>
+  <div class="info-box" style="border-left:3px solid var(--amber)">
+    <div class="t" style="color:var(--amber)">📅 Tage legen – 1 Wochentag + 1 Wochenendtag</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:7px;margin-top:8px;">
+      ${box("#6b7280","Laufpause (3 Wochen)","Frei wählbar, mind. 48 h Abstand zwischen A und B (z. B. Mi + Sa oder Do + So).")}
+      ${box("#3ecf8e","Ab Laufstart: Standard","Gym A am Tag nach der Di-Einheit (Mi). Gym B am Tag nach dem Long Run (So).")}
+      ${box("#f06060","Long Run mal am Sonntag?","Dann Gym B am Samstag nur Oberkörper – Hyperextensions, Beinstrecker und Tibialis weglassen.")}
+      ${box("#f5a623","Die eine harte Regel","Nie schwere Beine am Tag vor der Qualitätseinheit (Di) oder dem Long Run.")}
+    </div>
+  </div>
+  <div class="info-box" style="border-left:3px solid var(--green)">
+    <div class="t" style="color:var(--green)">📈 Progression & Phasen</div>
+    <p><strong>Doppelprogression:</strong> Erreichst du in allen Sätzen die obere Wdh.-Grenze, steigerst du das Gewicht (+2,5 kg Oberkörper, +5 kg Beine). Letzter Satz mit 1–2 Wdh. Reserve. Alles im Tracker loggen.<br>
+    <strong>Bis Februar:</strong> voller Aufbau, Entlastung alle 4 Wochen. <strong>Schwelle-Phase:</strong> Beine 1 Satz weniger. <strong>Ab 7 Wochen vor dem Rennen:</strong> Erhalt mit 2 Sätzen. <strong>Race Week:</strong> kein Gym.</p>
+  </div>
+  <div class="plans-grid">
+    ${Object.values(gymPlan).map(plan=>`
+      <div class="plan-card">
+        <div class="plan-head"><div class="plan-label" style="color:${plan.color}">${plan.label}</div><div class="plan-sub">${plan.subtitle}</div></div>
+        <div style="padding:10px 16px">
+          ${plan.exercises.map(ex=>`<div class="ex-row"><div><div class="ex-name">${ex.name}</div><div class="ex-note">${ex.note}</div></div><div class="ex-sets" style="color:${plan.color}">${ex.sets}</div></div>`).join("")}
+        </div>
+      </div>`).join("")}
+  </div>`;
+
+// ════════ MOBILITY ════════
+const mobilityRoutine = {
+  mobility: { label:"MOBILITY", subtitle:"~15 min · z. B. Freitag", color:"#f5a623",
+    exercises:[
+      {name:"Hüftbeuger-Stretch",sets:"60 s / Seite",note:"Kniend, Becken vorgeschoben"},
+      {name:"Pigeon Pose",sets:"60 s / Seite",note:"Hüftöffner, tief atmen"},
+      {name:"Waden / Achillesstretch",sets:"45 s / Seite",note:"An der Wand, Knie gestreckt + gebeugt"},
+      {name:"Hamstring-Stretch",sets:"45 s / Seite",note:"Stehend oder liegend"},
+      {name:"Thoraxrotation",sets:"10 Wdh. / Seite",note:"In Seitlage, Arm öffnen"},
+      {name:"Hüftkreisen",sets:"10 Wdh. / Seite",note:"Stehend, große Kreise"},
+    ]},
+  stability: { label:"STABILITÄT", subtitle:"~15–20 min · z. B. nach Gym B", color:"#b07ef5",
+    exercises:[
+      {name:"Glute Bridge",sets:"3 × 15",note:"Einbeinig für mehr Intensität"},
+      {name:"Single-Leg Deadlift",sets:"3 × 10 / Seite",note:"Laufspezifisch – Balance"},
+      {name:"Copenhagen Plank",sets:"3 × 20 s / Seite",note:"Adduktoren & Core"},
+      {name:"Bird Dog",sets:"3 × 10 / Seite",note:"Gegengleich, langsam"},
+      {name:"Side Plank",sets:"3 × 30 s / Seite",note:"Mit Hüftabsenkung"},
+      {name:"Clamshell",sets:"3 × 15 / Seite",note:"Band optional"},
+    ]},
+};
+document.getElementById("p-mobility").innerHTML = `
+  <div class="info-box" style="border-left:3px solid #f5a623">
+    <div class="t" style="color:#f5a623">Zweimal pro Woche, je ~15–20 Minuten</div>
+    <p>Mobility am lauffreien Freitag, Stabilität direkt im Anschluss an Gym B. Sanft und kontrolliert – das ist Verletzungsprävention, kein Workout. Gerade mit steigendem Tempo ab der Schwelle-Phase wird die Hüft- und Rumpfstabilität wichtiger.</p>
+  </div>
+  <div class="plans-grid">
+    ${Object.values(mobilityRoutine).map(plan=>`
+      <div class="plan-card">
+        <div class="plan-head"><div class="plan-label" style="color:${plan.color}">${plan.label}</div><div class="plan-sub">${plan.subtitle}</div></div>
+        <div style="padding:10px 16px">
+          ${plan.exercises.map(ex=>`<div class="ex-row"><div><div class="ex-name">${ex.name}</div><div class="ex-note">${ex.note}</div></div><div class="ex-sets" style="color:${plan.color}">${ex.sets}</div></div>`).join("")}
+        </div>
+      </div>`).join("")}
+  </div>`;
+
+// ════════ HINWEISE ════════
+const tips = [
+  ["🎯","Sub 2:00 in Zahlen","Du brauchst 5:41/km über 21,1 km – rund 50 s/km schneller als am 20.09. Die Checkpoints sind Schätzungen nach der Riegel-Formel: 5 km ≤ 26:00 bzw. 10 km ≤ 54:00 entsprechen etwa einem 2:00-Halbmarathon. Die Tests zeigen dir ehrlich, ob du auf Kurs bist."],
+  ["🛋️","Laufpause ernst nehmen","3 Wochen kein Laufen, auch wenn es kribbelt. Sehnen und Knochenhaut erholen sich langsamer als Herz und Muskeln – genau das war dein Schienbein-Thema. Radfahren und Spaziergänge sind erlaubt."],
+  ["🐢","80/20 bleibt die Basis","Rund 80 % deiner Kilometer bleiben locker. Neu ist genau eine Qualitätseinheit pro Woche (Di). Mehr Tempo bringt dich nicht schneller ans Ziel, sondern schneller zum Physio."],
+  ["🦵","Schienbein & Knie","Wochenumfang nie sprunghaft erhöhen, Entlastungswochen nicht auslassen. Neu ist Tempo – das ist ein zusätzlicher Reiz fürs Schienbein. Zieht es, wird die harte Einheit zum lockeren Lauf. Kommt es wieder, lass es abklären."],
+  ["🏋️","Gym & Laufen kombinieren","Gym A in der Woche, Gym B am Tag nach dem Long Run. Nie schwere Beine am Tag vor Di oder Sa. Tibialis Raises in B sind deine Schienbein-Versicherung."],
+  ["👟","Kadenz","Mit steigendem Tempo steigt die Kadenz von selbst. Locker 165+, Renntempo 170+. Kürzere, schnellere Schritte statt längerer."],
+  ["⚖️","Gewicht als Hebel","Jedes Kilo weniger macht dich bei gleicher Fitness schneller. Recomp-Ernährung weiterführen, aber an Qualitätstagen und Long-Run-Tagen die Carbs nicht kürzen."],
+  ["🔄","Plan anpassen","Renntag steht ganz oben im Code (RACE). Änderst du ihn, rechnet der Plan die letzten 16 Wochen neu – die Basisphase wird automatisch länger oder kürzer. Nach jedem Test die Pace-Zonen neu einordnen."],
+];
+document.getElementById("p-tips").innerHTML = tips.map(([icon,t,d])=>`
+  <div class="tip-card"><div class="tip-icon">${icon}</div><div><div class="tip-t">${t}</div><div class="tip-d">${d}</div></div></div>`).join("");
+
+function tab(name){
+  document.querySelectorAll(".nb").forEach((b,i)=>b.classList.toggle("on",["plan","gym","mobility","tips"][i]===name));
+  document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id===`p-${name}`));
+}
+</script>
+</body>
+</html>

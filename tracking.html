@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Workout Tracker – Halbmarathon 2026</title>
+<title>Spartan Workout Tracker · Gym A/B und Home-Grip</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -44,6 +44,10 @@
   .type-btn.on.torso { background:#0d1a3a; color:var(--blue); }
   .type-btn.on.a { background:#0d1a3a; color:var(--blue); }
   .type-btn.on.b { background:#0a2a1a; color:var(--green); }
+  .type-btn.on.home { background:#342716; color:var(--amber); }
+  .session-type.home { background:#342716; color:var(--amber); }
+  .type-toggle { flex-wrap:wrap; }
+  :root { --green:#f5a623; --teal:#f5bd5a; }
   .ex-meta { font-size:10px; color:var(--muted); font-family:monospace; }
   .ex-hint { margin:6px 14px 0; padding:6px 10px; border-radius:6px; font-size:11px; background:rgba(62,207,142,.08); color:var(--green); border:1px solid rgba(62,207,142,.25); }
   .ex-last { padding:6px 14px 0; font-size:10px; color:var(--muted); }
@@ -111,12 +115,13 @@
 <body>
 
 <header>
-  <a class="back" href="index.html">← Übersicht</a>
+  <a class="back" href="index.html">← Project Spartan</a>
   <div class="h-inner">
-    <div class="eyebrow">Krafttraining · Fortschritt</div>
+    <div class="eyebrow">Spartan Super 2027 · Krafttraining</div>
     <h1>Workout <span>Tracker</span></h1>
-    <p class="h-sub">Jeden Satz einzeln loggen · Progression über 18 Wochen</p>
+    <p class="h-sub">Jeden Satz einzeln loggen · Spartan-Vorbereitung bis 10. April 2027</p>
     <div id="sync-status">☁️ Verbinde mit Cloud…</div>
+    <div style="margin-top:15px"><a href="training.html" style="color:var(--amber);font-size:12px">Trainingsplan ansehen</a> · <a href="ernaehrung.html" style="color:var(--amber);font-size:12px">Ernährung & Mealprep</a></div>
   </div>
 </header>
 
@@ -128,11 +133,12 @@
 
 <div class="panel on" id="p-log">
   <div class="section-title">Workout eintragen</div>
-  <div class="section-sub">Wähle Einheit und Datum. Vorbelegt mit deinen letzten Werten – auch aus alten Limbs/Torso-Sessions. Erreichst du in allen Sätzen die obere Wdh.-Grenze, zeigt der Tracker dir: Gewicht erhöhen.</div>
+  <div class="section-sub">Wähle Gym A (Wochentag), Gym B (Wochenende) oder Home-Grip. Vorhandene Trainingseinträge aus dem bisherigen Plan bleiben vollständig erhalten. Bei Carries steht das Gewicht pro Hand bzw. pro Sandsack, die zweite Spalte misst Meter; bei Hangs steht dort die Haltezeit in Sekunden.</div>
   <div class="log-controls">
     <div class="type-toggle">
-      <button class="type-btn a on" id="tb-a" onclick="setType('a')">🅰️ Ganzkörper A</button>
-      <button class="type-btn b" id="tb-b" onclick="setType('b')">🅱️ Ganzkörper B</button>
+      <button class="type-btn a on" id="tb-a" onclick="setType('a')">A · Gym Wochentag</button>
+      <button class="type-btn b" id="tb-b" onclick="setType('b')">B · Gym Wochenende</button>
+      <button class="type-btn home" id="tb-home" onclick="setType('home')">Home · Griffkraft</button>
     </div>
     <input type="date" id="log-date">
   </div>
@@ -156,7 +162,7 @@
 </div>
 
 <div class="toast" id="toast">Gespeichert ✓</div>
-<footer>Workout Tracker · Sub-2 Projekt · Daten in der Cloud (Firebase)</footer>
+<footer>Project Spartan · Workout-Verlauf bleibt in deiner Firebase Cloud</footer>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
@@ -181,26 +187,32 @@ let cloudReady = false;
 // Namen identisch zu alten Einträgen → Vorbelegung & Charts laufen weiter
 const EXERCISES = {
   a: [
-    {name:"Beinpresse",         defSets:3, repMin:6,  repMax:10, defW:120},
-    {name:"Schrägbankdrücken",  defSets:3, repMin:6,  repMax:10, defW:20},
-    {name:"Latziehen",          defSets:3, repMin:8,  repMax:12, defW:45},
-    {name:"Beinbeuger liegend", defSets:3, repMin:10, repMax:12, defW:45},
-    {name:"Seitheben",          defSets:3, repMin:12, repMax:15, defW:4.5},
-    {name:"Triceps Pushdown",   defSets:3, repMin:10, repMax:12, defW:18},
-    {name:"Waden Isolation",    defSets:3, repMin:12, repMax:15, defW:50},
+    {name:"Beinpresse", defSets:3,repMin:6,repMax:10,defW:120},
+    {name:"Schrägbankdrücken", defSets:3,repMin:6,repMax:10,defW:20},
+    {name:"Klimmzüge", defSets:3,repMin:4,repMax:8,defW:0,startReps:4,note:"0 kg = Eigengewicht; Assist-Maschine oder Latziehen bei Bedarf als Alternative."},
+    {name:"Enges Rudern", defSets:3,repMin:8,repMax:12,defW:59},
+    {name:"Rumänisches Kreuzheben", defSets:3,repMin:6,repMax:10,defW:20,startReps:6,note:"Zuerst Technik und Bewegungsumfang sauber lernen."},
+    {name:"Farmer's Walk (m)", defSets:3,repMin:30,repMax:60,defW:12,startReps:30,unit:"Meter",note:"Gewicht pro Hand eintragen, Wegstrecke je Satz in Metern."},
+    {name:"Pallof Press", defSets:2,repMin:10,repMax:12,defW:5,startReps:10,note:"Pro Seite."}
   ],
   b: [
-    {name:"Hyperextensions",    defSets:3, repMin:10, repMax:12, defW:0},
-    {name:"Enges Rudern",       defSets:3, repMin:8,  repMax:12, defW:59},
-    {name:"Butterfly",          defSets:3, repMin:10, repMax:12, defW:41},
-    {name:"Beinstrecker",       defSets:3, repMin:12, repMax:15, defW:45},
-    {name:"Reverse Butterfly",  defSets:3, repMin:12, repMax:15, defW:null},
-    {name:"Preacher Curls",     defSets:3, repMin:10, repMax:12, defW:41},
-    {name:"Seitheben",          defSets:2, repMin:12, repMax:15, defW:4.5},
-    {name:"Tibialis Raises",    defSets:2, repMin:15, repMax:20, defW:0},
+    {name:"Step-ups mit Kurzhanteln", defSets:3,repMin:8,repMax:10,defW:6,startReps:8,note:"Pro Bein; leicht beginnen nach langem Lauf."},
+    {name:"Hyperextensions", defSets:3,repMin:10,repMax:12,defW:0},
+    {name:"Latziehen", defSets:3,repMin:8,repMax:12,defW:45},
+    {name:"Beinbeuger liegend", defSets:3,repMin:10,repMax:12,defW:45},
+    {name:"Butterfly", defSets:2,repMin:8,repMax:12,defW:41},
+    {name:"Sandbag Carry (m)", defSets:3,repMin:40,repMax:80,defW:15,startReps:40,unit:"Meter",note:"Gesamtgewicht des Sandsacks. Bei fehlendem Sandsack Farmers Walk nutzen."},
+    {name:"Reverse Butterfly", defSets:2,repMin:12,repMax:15,defW:0},
+    {name:"Tibialis Raises", defSets:2,repMin:15,repMax:20,defW:0}
   ],
+  home: [
+    {name:"Scapular Pull-ups", defSets:2,repMin:5,repMax:10,defW:0,startReps:5,note:"Schulterblätter aktiv nach unten ziehen."},
+    {name:"Dead Hang (Sek.)", defSets:3,repMin:15,repMax:60,defW:0,startReps:15,unit:"Sek.",note:"Gewicht = 0 kg; Zeit pro Satz in Sekunden."},
+    {name:"Hanging Knee Raises", defSets:2,repMin:6,repMax:12,defW:0,startReps:6,note:"Ohne Schwung, kontrollierte Kniebewegung."},
+    {name:"Handtuch-Hang (Sek.)", defSets:1,repMin:10,repMax:20,defW:0,startReps:10,unit:"Sek.",note:"Optional ab Januar, statt eines Dead-Hang-Satzes; nur an sicherer Stange."}
+  ]
 };
-const TYPE_LABEL = { a:"🅰️ Ganzkörper A", b:"🅱️ Ganzkörper B", limbs:"💪 Limbs", torso:"🏋️ Torso" };
+const TYPE_LABEL = {a:"A · Gym Wochentag",b:"B · Gym Wochenende",home:"Home · Griffkraft",limbs:"Limbs (Archiv)",torso:"Torso (Archiv)"};
 
 let currentType = "a";
 let formState = {};
@@ -286,7 +298,7 @@ function initFormState(){
         return {weight: s.weight, reps: s.reps};
       });
     } else {
-      formState[ex.name] = Array.from({length: ex.defSets}, () => ({weight: ex.defW ?? "", reps: ex.repMax}));
+      formState[ex.name] = Array.from({length: ex.defSets}, () => ({weight: ex.defW ?? "", reps: ex.startReps ?? ex.repMax}));
     }
   });
 }
@@ -298,7 +310,7 @@ function renderLogForm(){
       <div class="set-row">
         <span class="set-label">Satz ${si+1}</span>
         <input type="number" step="0.5" placeholder="kg" value="${s.weight}" oninput="updateSet('${esc(ex.name)}',${si},'weight',this.value)">
-        <input type="number" placeholder="Wdh" value="${s.reps}" oninput="updateSet('${esc(ex.name)}',${si},'reps',this.value)">
+        <input type="number" placeholder="${ex.unit||'Wdh'}" value="${s.reps}" oninput="updateSet('${esc(ex.name)}',${si},'reps',this.value)">
         <button class="set-del" title="Satz entfernen" onclick="removeSet('${esc(ex.name)}',${si})">×</button>
       </div>`).join("");
     const last = getLastExercise(currentType, ex.name);
@@ -309,9 +321,10 @@ function renderLogForm(){
     <div class="ex-block">
       <div class="ex-block-head"><span class="ex-block-name">${ex.name}</span><span class="ex-meta">${ex.defSets} × ${ex.repMin}–${ex.repMax}</span></div>
       <div class="ex-last">${lastTxt}</div>
+      ${ex.note ? `<div class="ex-last" style="color:var(--amber)">${ex.note}</div>` : ""}
       ${levelUp ? `<div class="ex-hint">⬆️ Obere Grenze in allen Sätzen erreicht – Gewicht erhöhen</div>` : ""}
       ${stale ? `<div class="ex-hint" style="background:rgba(245,166,35,.08);color:var(--amber);border-color:rgba(245,166,35,.25)">⏸ Letzter Eintrag > 6 Wochen alt – mit ca. 70–80 % des Gewichts wieder einsteigen</div>` : ""}
-      <div class="set-head"><span></span><span class="c">Gewicht (kg)</span><span class="c">Wdh</span><span></span></div>
+      <div class="set-head"><span></span><span class="c">Gewicht (kg)</span><span class="c">${ex.unit||"Wdh"}</span><span></span></div>
       ${rows}
       <button class="add-set" onclick="addSet('${esc(ex.name)}')">+ Satz hinzufügen</button>
     </div>`;
@@ -342,6 +355,7 @@ window.setType = function(type){
   currentType = type;
   document.getElementById("tb-a").classList.toggle("on", type==="a");
   document.getElementById("tb-b").classList.toggle("on", type==="b");
+  document.getElementById("tb-home").classList.toggle("on", type==="home");
   initFormState();
   renderLogForm();
 };
@@ -429,9 +443,11 @@ window.renderProgress = function(){
   const workouts = loadWorkouts().filter(w => w.exercises.some(e=>e.name===exName)).sort((a,b)=> a.date.localeCompare(b.date));
   const points = workouts.map(w=>{
     const e = w.exercises.find(x=>x.name===exName);
-    return { date:w.date, top: topSetWeight(e), vol: exVolume(e) };
+    const timeOnly = exName.includes("(Sek.)");
+    return { date:w.date, top: timeOnly?Math.max(...e.sets.map(s=>s.reps),0):topSetWeight(e), vol:timeOnly?e.sets.reduce((sum,s)=>sum+s.reps,0):exVolume(e) };
   });
   const c = document.getElementById("progress-container");
+  const topUnit = exName.includes("(Sek.)")?"Sek.":"kg";
   if(points.length === 0){ c.innerHTML = ""; return; }
   const tops = points.map(p=>p.top);
   const maxT = Math.max(...tops);
@@ -440,19 +456,19 @@ window.renderProgress = function(){
   const changePct = first>0 ? ((change/first)*100).toFixed(1) : 0;
   c.innerHTML = `
     <div class="chart-card">
-      <div class="chart-title">${exName} – schwerster Satz</div>
+      <div class="chart-title">${exName} – ${topUnit==="Sek."?"längster Hang":"schwerster Satz"}</div>
       <div class="chart-sub">${points.length} Einträge · ${points[0].date} bis ${points[points.length-1].date}</div>
       ${lineChart(points.map(p=>p.top), points.map(p=>p.date), "#3ecf8e")}
       <div class="chart-stats">
-        <div class="chart-stat"><div class="v" style="color:var(--green)">${last} kg</div><div class="l">Aktuell</div></div>
-        <div class="chart-stat"><div class="v" style="color:var(--text)">${maxT} kg</div><div class="l">Maximum</div></div>
-        <div class="chart-stat"><div class="v" style="color:${change>=0?'var(--green)':'var(--red)'}">${change>=0?'+':''}${change} kg</div><div class="l">Veränderung</div></div>
+        <div class="chart-stat"><div class="v" style="color:var(--green)">${last} ${topUnit}</div><div class="l">Aktuell</div></div>
+        <div class="chart-stat"><div class="v" style="color:var(--text)">${maxT} ${topUnit}</div><div class="l">Maximum</div></div>
+        <div class="chart-stat"><div class="v" style="color:${change>=0?'var(--green)':'var(--red)'}">${change>=0?'+':''}${change} ${topUnit}</div><div class="l">Veränderung</div></div>
         <div class="chart-stat"><div class="v" style="color:${change>=0?'var(--green)':'var(--red)'}">${change>=0?'+':''}${changePct}%</div><div class="l">seit Start</div></div>
       </div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">${exName} – Gesamtvolumen</div>
-      <div class="chart-sub">Summe aller Sätze (Gewicht × Wdh) pro Session</div>
+      <div class="chart-title">${exName} – ${topUnit==="Sek."?"Gesamte Hängezeit":"Gesamtvolumen"}</div>
+      <div class="chart-sub">${topUnit==="Sek."?"Summe aller Haltezeiten":"Summe aller Sätze (Gewicht × Wdh) pro Session"}</div>
       ${lineChart(points.map(p=>p.vol), points.map(p=>p.date), "#4f8ef7")}
     </div>`;
 };

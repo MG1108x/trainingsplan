@@ -133,12 +133,12 @@
 
 <div class="panel on" id="p-log">
   <div class="section-title">Workout eintragen</div>
-  <div class="section-sub">Wähle Gym A (Wochentag), Gym B (Wochenende) oder Home-Grip. Vorhandene Trainingseinträge aus dem bisherigen Plan bleiben vollständig erhalten. Bei Carries steht das Gewicht pro Hand bzw. pro Sandsack, die zweite Spalte misst Meter; bei Hangs steht dort die Haltezeit in Sekunden.</div>
+  <div class="section-sub">Gym A und B enthalten nur Geräte und klassisches Krafttraining. Im Home-Tab findest du Hangeln, Farmer’s Walk, Sandsack, Step-ups, Ausfallschritte, Wadenheben und den Grip Trainer. Hake bei jeder tatsächlich ausgeführten Übung „Trainiert“ an; nicht durchgeführte Übungen werden nicht gespeichert. Deine bisherigen Cloud-Workouts bleiben erhalten.</div>
   <div class="log-controls">
     <div class="type-toggle">
       <button class="type-btn a on" id="tb-a" onclick="setType('a')">A · Gym Wochentag</button>
       <button class="type-btn b" id="tb-b" onclick="setType('b')">B · Gym Wochenende</button>
-      <button class="type-btn home" id="tb-home" onclick="setType('home')">Home · Griffkraft</button>
+      <button class="type-btn home" id="tb-home" onclick="setType('home')">Home · OCR</button>
     </div>
     <input type="date" id="log-date">
   </div>
@@ -187,35 +187,39 @@ let cloudReady = false;
 // Namen identisch zu alten Einträgen → Vorbelegung & Charts laufen weiter
 const EXERCISES = {
   a: [
-    {name:"Beinpresse", defSets:3,repMin:6,repMax:10,defW:120},
-    {name:"Schrägbankdrücken", defSets:3,repMin:6,repMax:10,defW:20},
-    {name:"Klimmzüge", defSets:3,repMin:4,repMax:8,defW:0,startReps:4,note:"0 kg = Eigengewicht; Assist-Maschine oder Latziehen bei Bedarf als Alternative."},
-    {name:"Enges Rudern", defSets:3,repMin:8,repMax:12,defW:59},
-    {name:"Rumänisches Kreuzheben", defSets:3,repMin:6,repMax:10,defW:20,startReps:6,note:"Zuerst Technik und Bewegungsumfang sauber lernen."},
-    {name:"Farmer's Walk (m)", defSets:3,repMin:30,repMax:60,defW:12,startReps:30,unit:"Meter",note:"Gewicht pro Hand eintragen, Wegstrecke je Satz in Metern."},
-    {name:"Pallof Press", defSets:2,repMin:10,repMax:12,defW:5,startReps:10,note:"Pro Seite."}
+    {name:"Beinpresse",defSets:3,repMin:6,repMax:10,defW:120},
+    {name:"Schrägbankdrücken",defSets:3,repMin:6,repMax:10,defW:20},
+    {name:"Latziehen",defSets:3,repMin:8,repMax:12,defW:45},
+    {name:"Beinbeuger liegend",defSets:3,repMin:10,repMax:12,defW:45},
+    {name:"Reverse Butterfly",defSets:3,repMin:12,repMax:15,defW:0}
   ],
   b: [
-    {name:"Step-ups mit Kurzhanteln", defSets:3,repMin:8,repMax:10,defW:6,startReps:8,note:"Pro Bein; leicht beginnen nach langem Lauf."},
-    {name:"Hyperextensions", defSets:3,repMin:10,repMax:12,defW:0},
-    {name:"Latziehen", defSets:3,repMin:8,repMax:12,defW:45},
-    {name:"Beinbeuger liegend", defSets:3,repMin:10,repMax:12,defW:45},
-    {name:"Butterfly", defSets:2,repMin:8,repMax:12,defW:41},
-    {name:"Sandbag Carry (m)", defSets:3,repMin:40,repMax:80,defW:15,startReps:40,unit:"Meter",note:"Gesamtgewicht des Sandsacks. Bei fehlendem Sandsack Farmers Walk nutzen."},
-    {name:"Reverse Butterfly", defSets:2,repMin:12,repMax:15,defW:0},
-    {name:"Tibialis Raises", defSets:2,repMin:15,repMax:20,defW:0}
+    {name:"Hyperextensions",defSets:3,repMin:10,repMax:12,defW:0,note:"Bleibt im Plan. Bei belegter Maschine die Übung ans Ende verschieben."},
+    {name:"Enges Rudern",defSets:3,repMin:8,repMax:12,defW:59},
+    {name:"Butterfly",defSets:3,repMin:10,repMax:12,defW:41},
+    {name:"Beinstrecker",defSets:3,repMin:10,repMax:15,defW:45},
+    {name:"Latziehen",defSets:2,repMin:8,repMax:12,defW:45}
   ],
   home: [
-    {name:"Scapular Pull-ups", defSets:2,repMin:5,repMax:10,defW:0,startReps:5,note:"Schulterblätter aktiv nach unten ziehen."},
-    {name:"Dead Hang (Sek.)", defSets:3,repMin:15,repMax:60,defW:0,startReps:15,unit:"Sek.",note:"Gewicht = 0 kg; Zeit pro Satz in Sekunden."},
-    {name:"Hanging Knee Raises", defSets:2,repMin:6,repMax:12,defW:0,startReps:6,note:"Ohne Schwung, kontrollierte Kniebewegung."},
-    {name:"Handtuch-Hang (Sek.)", defSets:1,repMin:10,repMax:20,defW:0,startReps:10,unit:"Sek.",note:"Optional ab Januar, statt eines Dead-Hang-Satzes; nur an sicherer Stange."}
+    {name:"Klimmzüge",defSets:3,repMin:3,repMax:8,defW:0,startReps:3,note:"An deiner sicheren Klimmzugstange, bei Bedarf assistiert."},
+    {name:"Scapular Pull-ups",defSets:2,repMin:5,repMax:8,defW:0,startReps:5},
+    {name:"Dead Hang (Sek.)",defSets:3,repMin:15,repMax:40,defW:0,startReps:15,unit:"Sek."},
+    {name:"Hanging Knee Raises",defSets:2,repMin:6,repMax:10,defW:0,startReps:6},
+    {name:"Step-ups",defSets:2,repMin:8,repMax:10,defW:0,startReps:8,note:"Je Bein. Sichere Stufe."},
+    {name:"Ausfallschritte",defSets:2,repMin:8,repMax:10,defW:0,startReps:8,note:"Je Bein."},
+    {name:"Wadenheben",defSets:2,repMin:12,repMax:20,defW:0,startReps:12},
+    {name:"Bear Crawl (m)",defSets:2,repMin:10,repMax:20,defW:0,startReps:10,unit:"Meter"},
+    {name:"Farmer's Walk (m)",defSets:3,repMin:30,repMax:50,defW:0,startReps:30,unit:"Meter",note:"Optional bei vorhandenem Equipment; Gewicht pro Hand."},
+    {name:"Sandbag Carry (m)",defSets:3,repMin:30,repMax:60,defW:0,startReps:30,unit:"Meter",note:"Optional; Sandsackgewicht insgesamt."},
+    {name:"Handtuch-Hang (Sek.)",defSets:1,repMin:10,repMax:20,defW:0,startReps:10,unit:"Sek.",note:"Optional statt eines Dead-Hang-Satzes."},
+    {name:"Grip Trainer 32 kg",defSets:2,repMin:10,repMax:12,defW:32,startReps:10,note:"Je Hand. Optional 1–2-mal pro Woche, nicht nach harter Griffbelastung."}
   ]
 };
-const TYPE_LABEL = {a:"A · Gym Wochentag",b:"B · Gym Wochenende",home:"Home · Griffkraft",limbs:"Limbs (Archiv)",torso:"Torso (Archiv)"};
+const TYPE_LABEL = {a:"A · Gym Werktag",b:"B · Gym Wochenende",home:"Home · OCR",limbs:"Limbs (Archiv)",torso:"Torso (Archiv)"};
 
 let currentType = "a";
 let formState = {};
+let exerciseIncluded = {}; // nur bewusst ausgewählte Übungen werden gespeichert
 let formTouched = false; // erst nach eigener Eingabe nicht mehr automatisch neu vorbelegen
 
 // ── Abwärtskompatibilität: altes Format (Gewicht+Wdh+Anzahl Sätze) → neues Satz-Format ──
@@ -289,6 +293,7 @@ function getLastExercise(type, exName){
 
 function initFormState(){
   formState = {};
+  exerciseIncluded = {};
   EXERCISES[currentType].forEach(ex => {
     const last = getLastExercise(currentType, ex.name);
     if(last && last.sets && last.sets.length){
@@ -319,7 +324,7 @@ function renderLogForm(){
     const levelUp = last && !stale && last.sets.length && last.sets.every(s => s.reps >= ex.repMax);
     return `
     <div class="ex-block">
-      <div class="ex-block-head"><span class="ex-block-name">${ex.name}</span><span class="ex-meta">${ex.defSets} × ${ex.repMin}–${ex.repMax}</span></div>
+      <div class="ex-block-head"><span class="ex-block-name">${ex.name}</span><label class="ex-meta" style="display:flex;align-items:center;gap:7px;cursor:pointer"><input type="checkbox" ${exerciseIncluded[ex.name]?"checked":""} onchange="toggleExercise(\'${esc(ex.name)}\',this.checked)" style="accent-color:var(--green);width:17px;height:17px"> Trainiert · ${ex.defSets} × ${ex.repMin}–${ex.repMax}</label></div>
       <div class="ex-last">${lastTxt}</div>
       ${ex.note ? `<div class="ex-last" style="color:var(--amber)">${ex.note}</div>` : ""}
       ${levelUp ? `<div class="ex-hint">⬆️ Obere Grenze in allen Sätzen erreicht – Gewicht erhöhen</div>` : ""}
@@ -334,21 +339,28 @@ function renderLogForm(){
 
 function esc(s){ return s.replace(/'/g,"\\'"); }
 
+window.toggleExercise = function(exName, included){exerciseIncluded[exName]=included;formTouched=true;};
+
 window.updateSet = function(exName, si, field, val){
   if(!formState[exName]) return;
   formTouched = true;
+  exerciseIncluded[exName] = true;
   formState[exName][si][field] = val;
+  const block = [...document.querySelectorAll(".ex-block")].find(b=>b.querySelector(".ex-block-name")?.textContent===exName);
+  const cb = block?.querySelector("input[type=checkbox]"); if(cb)cb.checked=true;
 };
 window.addSet = function(exName){
   formTouched = true;
   const arr = formState[exName];
   const last = arr[arr.length-1] || {weight:"", reps:""};
   arr.push({weight:last.weight, reps:last.reps});
+  exerciseIncluded[exName] = true;
   renderLogForm();
 };
 window.removeSet = function(exName, si){
   formTouched = true;
   formState[exName].splice(si,1);
+  exerciseIncluded[exName] = true;
   renderLogForm();
 };
 window.setType = function(type){
@@ -363,15 +375,15 @@ window.setType = function(type){
 window.saveWorkout = async function(){
   const date = document.getElementById("log-date").value;
   if(!date){ alert("Bitte ein Datum wählen."); return; }
-  const exercises = EXERCISES[currentType].map(ex => {
+  const exercises = EXERCISES[currentType].filter(ex=>exerciseIncluded[ex.name]).map(ex => {
     const sets = (formState[ex.name]||[])
       .map(s => ({weight: parseFloat(s.weight)||0, reps: parseInt(s.reps)||0}))
       .filter(s => s.reps > 0);
     return {name: ex.name, sets};
   }).filter(e => e.sets.length > 0);
-  if(exercises.length === 0){ alert("Bitte mindestens einen Satz ausfüllen."); return; }
+  if(exercises.length === 0){ alert("Bitte mindestens eine durchgeführte Übung mit dem Häkchen Trainiert auswählen."); return; }
   const w = { id: Date.now(), type: currentType, date, exercises };
-  try { await pushWorkout(w); formTouched = false; showToast(); }
+  try { await pushWorkout(w); formTouched = false; exerciseIncluded={}; initFormState(); renderLogForm(); showToast(); }
   catch(e){ alert("Speichern fehlgeschlagen – Cloud nicht erreichbar."); console.error(e); }
 };
 

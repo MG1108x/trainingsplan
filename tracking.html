@@ -187,18 +187,21 @@ let cloudReady = false;
 // Namen identisch zu alten Einträgen → Vorbelegung & Charts laufen weiter
 const EXERCISES = {
   a: [
-    {name:"Beinpresse",defSets:3,repMin:6,repMax:10,defW:120},
-    {name:"Schrägbankdrücken",defSets:3,repMin:6,repMax:10,defW:20},
-    {name:"Latziehen",defSets:3,repMin:8,repMax:12,defW:45},
-    {name:"Beinbeuger liegend",defSets:3,repMin:10,repMax:12,defW:45},
-    {name:"Reverse Butterfly",defSets:3,repMin:12,repMax:15,defW:0}
+    {name:"Beinpresse",defSets:3,repMin:8,repMax:12,defW:120,startReps:10,note:"11.11.: Aufwärmsatz 81 kg × 10, anschließend 120 kg × 11 / 11. Die letzten Sätze werden automatisch aus dem Verlauf geladen."},
+    {name:"Schrägbankdrücken",defSets:3,repMin:6,repMax:10,defW:40,startReps:8,note:"11.11.: 40 kg × 10 / 8 / 8. Wiederholungen mit Reserve steigern."},
+    {name:"Enges Rudern",defSets:3,repMin:8,repMax:12,defW:66,startReps:8,note:"11.11.: 66 kg × 10 / 8 / 8."},
+    {name:"Beinbeuger liegend",defSets:2,repMin:10,repMax:12,defW:45,startReps:10,note:"18.11.: 36 kg × 11, 45 kg × 10 / 10; Gerät ist in Gym A und B möglich."},
+    {name:"Schulterpresse Maschine",defSets:2,repMin:8,repMax:12,defW:0,startReps:8,note:"Neue Übung, mit leichtem Gewicht starten und Maschine einstellen."},
+    {name:"Triceps Pushdown",defSets:2,repMin:10,repMax:15,defW:0,startReps:10,note:"Neue Übung am Kabelzug, Ellenbogen ruhig halten."}
   ],
   b: [
-    {name:"Latziehen",defSets:3,repMin:8,repMax:12,defW:52,note:"Letzte Einheit 18.11.: 52 kg, 11 / 10 / 10 Wdh."},
-    {name:"Beinbeuger liegend",defSets:3,repMin:8,repMax:12,defW:45,note:"Letzte Einheit 18.11.: 36 kg × 11, 45 kg × 10 / 10."},
-    {name:"Butterfly",defSets:3,repMin:8,repMax:12,defW:54,note:"Letzte Einheit 18.11.: 45 kg × 10, 54 kg × 10 / 7."},
-    {name:"Reverse Butterfly",defSets:3,repMin:8,repMax:12,defW:36,note:"Letzte Einheit 18.11.: 45 kg × 9, 36 kg × 11 / 10."},
-    {name:"Hyperextensions",defSets:3,repMin:10,repMax:12,defW:0,note:"Bleibt im Plan; am 18.11. wegen belegter Maschine ausgelassen."}
+    {name:"Latziehen",defSets:3,repMin:8,repMax:12,defW:52,startReps:10,note:"18.11.: 52 kg × 11 / 10 / 10."},
+    {name:"Beinbeuger liegend",defSets:3,repMin:8,repMax:12,defW:45,startReps:10,note:"18.11.: 36 kg × 11, 45 kg × 10 / 10; Gerät ist in Gym A und B möglich."},
+    {name:"Butterfly",defSets:3,repMin:8,repMax:12,defW:54,startReps:8,note:"18.11.: 45 kg × 10, 54 kg × 10 / 7."},
+    {name:"Reverse Butterfly",defSets:3,repMin:10,repMax:15,defW:36,startReps:10,note:"18.11.: 45 kg × 9, 36 kg × 11 / 10."},
+    {name:"Hyperextensions",defSets:2,repMin:10,repMax:15,defW:0,startReps:10,note:"Bleibt im Plan; 18.11. nur wegen belegter Maschine ausgelassen."},
+    {name:"Beinstrecker",defSets:2,repMin:10,repMax:15,defW:0,startReps:10,note:"Neu im aktuellen Plan. Leicht starten, Knie kontrollieren."},
+    {name:"Bizepscurls am Kabelzug",defSets:2,repMin:10,repMax:15,defW:0,startReps:10,note:"Optionaler Zusatzsatzblock. Bei Zeitmangel auslassen."}
   ],
   home: [
     {name:"Klimmzüge",defSets:3,repMin:3,repMax:8,defW:0,startReps:3,note:"An deiner sicheren Klimmzugstange, bei Bedarf assistiert."},
@@ -212,6 +215,7 @@ const EXERCISES = {
     {name:"Farmer's Walk (m)",defSets:3,repMin:30,repMax:50,defW:0,startReps:30,unit:"Meter",note:"Optional bei vorhandenem Equipment; Gewicht pro Hand."},
     {name:"Sandbag Carry (m)",defSets:3,repMin:30,repMax:60,defW:0,startReps:30,unit:"Meter",note:"Optional; Sandsackgewicht insgesamt."},
     {name:"Handtuch-Hang (Sek.)",defSets:1,repMin:10,repMax:20,defW:0,startReps:10,unit:"Sek.",note:"Optional statt eines Dead-Hang-Satzes."},
+    {name:"Pallof Press mit Band",defSets:2,repMin:10,repMax:12,defW:0,startReps:10,note:"Optional pro Seite, mit Widerstandsband. Kabelzuggewichte nicht direkt vergleichen."},
     {name:"Grip Trainer 32 kg",defSets:2,repMin:10,repMax:12,defW:32,startReps:10,note:"Je Hand. Optional 1–2-mal pro Woche, nicht nach harter Griffbelastung."}
   ]
 };

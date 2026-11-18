@@ -319,7 +319,7 @@ function renderLogForm(){
         <button class="set-del" title="Satz entfernen" onclick="removeSet('${esc(ex.name)}',${si})">×</button>
       </div>`).join("");
     const last = getLastExercise(currentType, ex.name);
-    const lastTxt = last ? `Zuletzt ${new Date(last.date).toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}: ${last.sets.map(s=>(s.weight>0?s.weight+"×":"")+s.reps).join(" · ")}` : "Noch kein Eintrag";
+    const lastTxt = last ? `Zuletzt ${new Date(last.date).toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}: ${last.sets.map(s=>formatSet(ex,s)).join(" · ")}` : "Noch kein Eintrag";
     const stale = last && (Date.now() - new Date(last.date)) > 42*864e5;
     const levelUp = last && !stale && last.sets.length && last.sets.every(s => s.reps >= ex.repMax);
     return `
@@ -394,7 +394,8 @@ function showToast(){
 }
 
 function exVolume(ex){ return ex.sets.reduce((s,set)=> s + set.weight*set.reps, 0); }
-function sessionVolume(w){ return w.exercises.reduce((s,e)=> s + exVolume(e), 0); }
+function sessionVolume(w){ return w.exercises.filter(e=>!e.name.includes("(m)")&&!e.name.includes("(Sek.)")).reduce((s,e)=> s + exVolume(e), 0); }
+function formatSet(ex,s){ const unit=ex.name.includes("(m)")?" m":ex.name.includes("(Sek.)")?" Sek.":" Wdh";return (s.weight>0?s.weight+" kg · ":"")+s.reps+unit; }
 function topSetWeight(ex){ return Math.max(...ex.sets.map(s=>s.weight), 0); }
 
 function renderHistory(){
@@ -411,7 +412,7 @@ function renderHistory(){
       <div class="sess-ex">
         <div class="sess-ex-name">${e.name}</div>
         <div class="sess-sets">
-          ${e.sets.map((s,i)=>`<span class="sess-set-chip">S${i+1}: <b>${s.weight>0?s.weight+" kg × ":""}${s.reps}</b></span>`).join("")}
+          ${e.sets.map((s,i)=>`<span class="sess-set-chip">S${i+1}: <b>${formatSet(e,s)}</b></span>`).join("")}
         </div>
       </div>`).join("");
     return `
@@ -420,7 +421,7 @@ function renderHistory(){
         <div class="session-left">
           <span class="session-type ${w.type}">${TYPE_LABEL[w.type]||w.type}</span>
           <span class="session-date">${d}</span>
-          <span class="session-vol">${vol} kg Vol.</span>
+          <span class="session-vol">${w.type==="home"?"Home-OCR":vol+" kg Vol."}</span>
         </div>
         <span class="session-chev">▼</span>
       </div>
@@ -455,11 +456,11 @@ window.renderProgress = function(){
   const workouts = loadWorkouts().filter(w => w.exercises.some(e=>e.name===exName)).sort((a,b)=> a.date.localeCompare(b.date));
   const points = workouts.map(w=>{
     const e = w.exercises.find(x=>x.name===exName);
-    const timeOnly = exName.includes("(Sek.)");
-    return { date:w.date, top: timeOnly?Math.max(...e.sets.map(s=>s.reps),0):topSetWeight(e), vol:timeOnly?e.sets.reduce((sum,s)=>sum+s.reps,0):exVolume(e) };
+    const measure = exName.includes("(Sek.)")||exName.includes("(m)");
+    return { date:w.date, top: measure?Math.max(...e.sets.map(s=>s.reps),0):topSetWeight(e), vol:measure?e.sets.reduce((sum,s)=>sum+s.reps,0):exVolume(e) };
   });
   const c = document.getElementById("progress-container");
-  const topUnit = exName.includes("(Sek.)")?"Sek.":"kg";
+  const topUnit = exName.includes("(Sek.)")?"Sek.":exName.includes("(m)")?"m":"kg";
   if(points.length === 0){ c.innerHTML = ""; return; }
   const tops = points.map(p=>p.top);
   const maxT = Math.max(...tops);
@@ -468,7 +469,7 @@ window.renderProgress = function(){
   const changePct = first>0 ? ((change/first)*100).toFixed(1) : 0;
   c.innerHTML = `
     <div class="chart-card">
-      <div class="chart-title">${exName} – ${topUnit==="Sek."?"längster Hang":"schwerster Satz"}</div>
+      <div class="chart-title">${exName} – ${topUnit==="Sek."?"längster Hang":topUnit==="m"?"längste Strecke":"schwerster Satz"}</div>
       <div class="chart-sub">${points.length} Einträge · ${points[0].date} bis ${points[points.length-1].date}</div>
       ${lineChart(points.map(p=>p.top), points.map(p=>p.date), "#3ecf8e")}
       <div class="chart-stats">
@@ -479,8 +480,8 @@ window.renderProgress = function(){
       </div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">${exName} – ${topUnit==="Sek."?"Gesamte Hängezeit":"Gesamtvolumen"}</div>
-      <div class="chart-sub">${topUnit==="Sek."?"Summe aller Haltezeiten":"Summe aller Sätze (Gewicht × Wdh) pro Session"}</div>
+      <div class="chart-title">${exName} – ${topUnit==="Sek."?"Gesamte Hängezeit":topUnit==="m"?"Gesamtstrecke":"Gesamtvolumen"}</div>
+      <div class="chart-sub">${topUnit==="Sek."?"Summe aller Haltezeiten":topUnit==="m"?"Summe aller getragenen Meter":"Summe aller Sätze (Gewicht × Wdh) pro Session"}</div>
       ${lineChart(points.map(p=>p.vol), points.map(p=>p.date), "#4f8ef7")}
     </div>`;
 };
